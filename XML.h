@@ -165,7 +165,12 @@ namespace domx
   void
   appendTextElement (DOMNode* node, const xstring& tag, const xstring& data);
 
-
+  /**
+   * Return the value of the child text node of the given node, or an
+   * empty string if the child is not a text node or does not exist.
+   **/
+  string
+  getTextElement (DOMNode* node);
 
   class ErrorFormatter
   {

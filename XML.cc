@@ -25,6 +25,23 @@ namespace domx
   }
 
 
+  string
+  getTextElement (DOMNode* node)
+  {
+    xstring value;
+    DOMNode* child = node->getFirstChild();
+    while (child)
+    {
+      if (child->getNodeType() == DOMNode::TEXT_NODE)
+      {
+	value = child->getNodeValue();
+      }
+      child = child->getNextSibling();
+    }
+    return value;
+  }
+
+
   DOMElement*
   asElement (DOMNode* node)
   {
