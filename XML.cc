@@ -37,6 +37,7 @@ namespace domx
   }
 
 
+  template <>
   void
   setAttribute (DOMNode* node, const xstring& name, const xstring& value)
   {
@@ -46,8 +47,9 @@ namespace domx
   }
 
 
+  template <>
   bool
-  getAttribute (DOMNode* node, const XMLCh* name, xstring *value)
+  getAttribute (DOMNode* node, const xstring& name, xstring *value)
   {
     bool found = false;
     if (node->getNodeType() == DOMNode::ELEMENT_NODE)

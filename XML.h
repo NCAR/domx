@@ -121,26 +121,46 @@ namespace domx
    * attribute exists, return true.  If value is nonzero, then set it
    * to the value of the attribute.
    **/
+  template <typename T>
   bool
-  getAttribute (DOMNode* node, const XMLCh* name, xstring *value = 0);
+  getAttribute (DOMNode* node, const xstring& name, T* value)
+  {
+    xstring xvalue;
+    if (getAttribute<xstring> (node, name, &xvalue))
+    {
+      if (value)
+      {
+	std::istringstream os (xvalue);
+	os >> *value;
+      }
+      return true;
+    }
+    return false;
+  }
+
+  template <>
+  bool
+  getAttribute (DOMNode* node, const xstring& name, xstring *value);
 
   inline bool
   getAttribute (DOMNode* node, const char* name, xstring *value = 0)
   {
-    return getAttribute(node, xstring(name), value);
+    return getAttribute<xstring> (node, xstring(name), value);
   }
-
-  void
-  setAttribute (DOMNode* node, const xstring& name, const xstring& value);
 
   template <typename T>
   void
-  setAttribute (DOMElement* node, const xstring& name, T value)
+  setAttribute (DOMNode* node, const xstring& name, const T& value)
   {
     std::ostringstream os;
     os << value;
-    node->setAttribute (name, xstring(os.str()));
+    setAttribute<xstring> (node, name, xstring(os.str()));
   }
+
+  template <>
+  void
+  setAttribute (DOMNode* node, 
+		const xstring& name, const xstring& value);
 
   void
   appendTextElement (DOMNode* node, const xstring& tag, const xstring& data);
