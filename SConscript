@@ -11,10 +11,17 @@ def PKG_DOMX(env):
 
 Export('PKG_DOMX')
 
-lib = env.Library('domx', Split("""
- XML.cc XmlObjectInterface.cc XmlObjectCatalog.cc XmlTime.cc
-"""))
+sources = Split(
+"""
+ XML.cc XmlObjectInterface.cc XmlObjectCatalog.cc XmlTime.cc XmlFileObject.cc
+""")
+
+lib = env.Library('domx', sources)
 Default(lib)
+
+xmlfilescan = env.Program('xmlfilescan', sources +
+			  ["xmlfilescan.cc"])
+Default(xmlfilescan)
 
 SConscript(dirs=['tests'])
 

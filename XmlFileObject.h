@@ -41,9 +41,21 @@ namespace domx
     XmlObjectMember<unsigned long> Size;
 
     /**
-     * The time the file was created.
+     * The time the file was created, if known.
      **/
     XmlObjectMember<XmlTime> Created;
+
+    /**
+     * Stat attributes for the file.
+     **/
+    XmlObjectMember<XmlTime> Modified;
+    XmlObjectMember<XmlTime> Changed;
+    XmlObjectMember<XmlTime> Accessed;
+
+    /**
+     * An md5sum for the file, stored as a 32-character base16 string.
+     **/
+    XmlObjectMember<std::string> MD5;
 
     XmlFileObject() :
       _xi(newNode("xmlfileobject")),
@@ -51,7 +63,11 @@ namespace domx
       Description (_xi, "description"),
       Directory (_xi, "directory"),
       Size (_xi, "size"),
-      Created (_xi, "created")
+      Created (_xi, "created"),
+      Modified (_xi, "modified"),
+      Changed (_xi, "changed"),
+      Accessed (_xi, "accessed"),
+      MD5 (_xi, "md5")
     {}
 
 
@@ -76,6 +92,15 @@ namespace domx
       return Directory() + "/" + Name();
     }
       
+
+    /**
+     * Compute the md5 checksum for this file using the current directory
+     * and filename, and store that checksum into the MD5 attribute.
+     *
+     * @returns zero on failure, non-zero otherwise.
+     **/
+    int
+    computeMD5 ();
 
   };
 
