@@ -196,19 +196,20 @@ namespace domx
   };
 
 
-#ifdef notdef
-  typedef DOMDocument Document;
-  typedef DOMNode Node;
-  typedef DOMDOMException DOMException;
-  typedef DOMDocumentType DocumentType;
-  typedef void (*XMLConstructor)(Node &);
-  void createFromNode (Node &node);
+  class LogErrorHandler : public DOMErrorHandler
+  {
+  public:
 
-  bool mapFindAttribute (DOMNamedNodeMap alist, 
-			 DOMString name, string *value = 0);
+    LogErrorHandler(log4cpp::Category &log);
 
-  void Print (ostream &out, DOMNode doc);
-#endif
+    virtual bool
+    handleError (const DOMError &domError);
+
+  private:
+
+    log4cpp::Category &mLog;
+
+  };
 
 };
 

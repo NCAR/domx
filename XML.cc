@@ -156,6 +156,24 @@ namespace domx
   }
 
 
+  LogErrorHandler::LogErrorHandler(log4cpp::Category &log) :
+    mLog (log)
+  {
+  }
+
+
+  bool
+  LogErrorHandler::handleError (const DOMError &domError)
+  {
+    char *msg = XMLString::transcode(domError.getMessage());
+    mLog.errorStream() << msg << endlog;
+    delete[] msg;
+
+    // Instructs the serializer to continue serialization if possible.
+    return true;
+  }
+
+
 } // namespace domx
 
 
