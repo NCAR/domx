@@ -12,6 +12,7 @@ namespace
   log4cpp::CategoryStream::Separator endlog = log4cpp::CategoryStream::ENDLINE;
 }
 
+using std::string;
 
 namespace domx
 {
@@ -25,7 +26,7 @@ namespace domx
   }
 
 
-  string
+  std::string
   getTextElement (DOMNode* node)
   {
     xstring value;
@@ -110,7 +111,7 @@ namespace domx
   string 
   ErrorFormatter::warning(const SAXParseException& toCatch)
   {
-    ostringstream out;
+    std::ostringstream out;
     out << "Error at file \"" << xstring(toCatch.getSystemId())
 	<< "\", line " << toCatch.getLineNumber()
 	<< ", column " << toCatch.getColumnNumber()
@@ -121,7 +122,7 @@ namespace domx
 
   string ErrorFormatter::error(const SAXParseException& toCatch)
   {
-    ostringstream out;
+    std::ostringstream out;
     out << "Error at file \"" << xstring(toCatch.getSystemId())
 	<< "\", line " << toCatch.getLineNumber()
 	<< ", column " << toCatch.getColumnNumber()
@@ -132,7 +133,7 @@ namespace domx
 
   string ErrorFormatter::fatalError(const SAXParseException& toCatch)
   {
-    ostringstream out;
+    std::ostringstream out;
     out << "Error at file \"" << xstring(toCatch.getSystemId())
 	<< "\", line " << toCatch.getLineNumber()
 	<< ", column " << toCatch.getColumnNumber()

@@ -9,19 +9,9 @@
 #include <sstream>
 
 // Includes for Xerces-C
-//#include <util/XercesDefs.hpp>
 #include <xercesc/dom/DOM.hpp>
 #include <xercesc/util/XMLString.hpp>
 #include <xercesc/sax/HandlerBase.hpp>
-
-//#include <dom/DOM_NodeList.hpp>
-//#include <sax/SAXParseException.hpp>
-//#include <sax/ErrorHandler.hpp>
-
-#ifdef notdef
-class ostream;
-ostream& operator<< (ostream& target, const DOMString& s);
-#endif
 
 namespace log4cpp
 {
@@ -169,7 +159,7 @@ namespace domx
    * Return the value of the child text node of the given node, or an
    * empty string if the child is not a text node or does not exist.
    **/
-  string
+  std::string
   getTextElement (DOMNode* node);
 
   class ErrorFormatter
