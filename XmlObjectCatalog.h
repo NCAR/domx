@@ -19,15 +19,18 @@ namespace domx
 
   /**
    * An XmlObjectCatalog is a cheap but reliable storage mechanism for
-   * XmlObject implementations.  It uses the atomic operations of the
-   * filesystem to insert and remove object instances.  Instances are
-   * written to individual files as xml, and text key for each object is
-   * also the filename, which makes it easy to lookup object instances for
-   * a given name.  If a method fails, an error message is accumulated and
-   * the method returns false.  The current accumulation of error messages
-   * can be checked with the errorsPending(), clearErrors(), and
-   * getErrors() methods.  The maximum of number of errors accumulated is
-   * @code MAX_PENDING_ERRORS.
+   * XmlObject instances.  It uses the atomic operations of the filesystem
+   * to insert and remove object instances.  Instances are written to
+   * individual files as xml, and the text key for each object is also the
+   * filename, which makes it easy to lookup object instances for a given
+   * name.  If a method fails, an error message is accumulated and the
+   * method returns false.  The current accumulation of error messages can
+   * be checked with the errorsPending(), clearErrors(), and getErrors()
+   * methods.  The maximum of number of errors accumulated is @code
+   * MAX_PENDING_ERRORS.
+   *
+   * Catalogs are hierarchical: one catalog can contain other catalogs.
+   * All catalogs reside under a default root directory.
    **/
   class XmlObjectCatalog
   {
@@ -38,60 +41,65 @@ namespace domx
     static const unsigned int MAX_PENDING_ERRORS = 10;
 
     /**
+     * Set the path to the root catalog directory under which all catalogs
+     * will be opened.  The default is '/var/xmlobjects'.
+     **/
+    static void
+    setRootCatalogDirectory(const std::string& dir);
+
+    static 
+    std::string
+    rootCatalogDirectory();
+
+    /**
      * Construct a closed, empty catalog.  Nothing can be inserted until a
-     * call to open() succeeds.  Until the catalog appears to be empty.
+     * call to open() succeeds.  Until then the catalog appears empty.
      **/
     XmlObjectCatalog();
 
     /**
-     * Every XmlObjectCatalog has a name.  The directory path @dir is the
-     * path under which the catalog's directory will be created.  Thus the
-     * full path to the catalog directory will be "<dir>/<name>.catalog".
-     * If the directory does not already exist, it will be created.
+     * Every XmlObjectCatalog has a path.  The path is always relative to
+     * the root catalog directory.  If the directory does not already
+     * exist, it will be created.  If the path includes parent catalog
+     * paths, then those will be created as well as necessary.
      *
-     * An XmlObjectCatalog can register itself with a system-wide catalog
-     * of Catalogs so that file catalogs can be looked up by name without
-     * knowing the full directory path.  If @p system_wide is @code true,
-     * then this catalog will be registered in the system catalog as long
-     * as its directory can be opened successfully.  If an entry by this
-     * name already exists in the system catalog, then it will be
-     * overwritten.
-     *
-     * The system catalog is in /var/tmp/system.catalog.
-     *
-     * To open an existing catalog by its name alone, use the other
-     * open() method.
+     * See setRootCatalogDirectory().
      **/
     bool
-    open (const std::string& name, const std::string& dir,
-	  bool system_wide = true);
+    open (const std::string& path);
+
 
     /**
-     * Open the catalog with this name by looking it up in the system
-     * catalog.  If no such catalog exists, then this method returns false,
-     * isOpen() will return false, and all attempts to change the catalog
-     * will fail.  If the system catalog has an entry by this name but its
-     * directory does not exist yet, then this method will attempt to
-     * create it.  If the directory does not exist and cannot be created,
-     * then return false.
+     * Open a catalog as a child of the given catalog.  Just like the other
+     * open() method, except the name is relative to the given catalog
+     * rather than the root directory.
      **/
     bool
-    open (const std::string& name);
+    open (XmlObjectCatalog& parent, const std::string& path);
+
 
     /**
-     * Register this catalog with the system catalog, but only if this
-     * catalog is currently open.  If the system catalog cannot be opened,
-     * then this method fails.  This will overwrite any existing entry in
-     * the catalog by the same name.
+     * Register this catalog in the system catalog.
      **/
     bool
     registerCatalog();
 
+
     /**
-     * Return the name of this catalog.
+     * Return the name of this catalog.  This is the fully qualified,
+     * hierarchical name, guaranteed to be unique among all the catalogs in
+     * the database.
      **/
     std::string
     name();
+
+    /**
+     * Return the full name converted to the dot format: the slashes are
+     * replaced with periods to make the name suitable for a catalog key or
+     * to embed this name into the name of another catalog.
+     **/
+    std::string
+    dotName();
 
     /**
      * Check whether the catalog directory could be opened.  If not, this

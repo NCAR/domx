@@ -12,47 +12,47 @@ class Vehicle : public XmlObjectInterface
 {
   XmlObjectNode* _xi;
 
-  static void
-  construct (XmlObjectInterface* xi)
-  {
-    Vehicle* v = static_cast<Vehicle*>(xi);
-    v->setSpeed(0);
-    v->setAxles(0);
-  }
+  XmlObjectMember<float> Speed;
+  XmlObjectMember<int> Axles;
 
 public:
 
-  Vehicle ()
+  Vehicle () :
+    _xi (newNode("vehicle")),
+    Speed (_xi, "speed"),
+    Axles (_xi, "axles")
   {
-    _xi = newNode("vehicle", &construct);
   }
 
   void
   setSpeed (float f)
   {
-    _xi->set ("speed", f);
+    Speed = f;
   }
 
   float
   getSpeed ()
   {
-    float f;
-    _xi->get ("speed", f);
-    return f;
+    return Speed();
   }
 
   void
   setAxles (int i)
   {
-    _xi->set("axles", i);
+    Axles = i;
   }
 
   int
   getAxles ()
   {
-    int i;
-    _xi->get("axles", i);
-    return i;
+    return Axles();
+  }
+
+  Vehicle&
+  operator= (const Vehicle& v)
+  {
+    XmlObjectInterface::operator= (v);
+    return *this;
   }
 
 };

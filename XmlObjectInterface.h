@@ -9,6 +9,7 @@
 #include <string>
 #include <map>
 #include <vector>
+#include <iosfwd>
 
 namespace domx
 {
@@ -48,6 +49,13 @@ namespace domx
      **/
     bool
     fromXML (const std::string& in);
+
+    /**
+     * Load an object from the given input stream @p in.  Returns true
+     * on success and false otherwise.
+     **/
+    bool
+    fromXML (std::istream& in);
 
     /**
      * Load this object from the XML file located at @p filepath.  
@@ -124,6 +132,15 @@ namespace domx
      **/
     XmlObjectInterface*
     getInterface (const std::string& name);
+
+
+    /**
+     * Re-initialize this object by reconstructing its document from
+     * scratch.  Any current interfaces onto this object remain intact and
+     * valid.
+     **/
+    void
+    reset();
 
   protected:
 

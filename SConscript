@@ -23,5 +23,9 @@ xmlfilescan = env.Program('xmlfilescan', sources +
 			  ["xmlfilescan.cc"])
 Default(xmlfilescan)
 
+xmlcatalog = env.Program('xmlcatalog', sources +
+			 ["xmlcatalog.cc"])
+Default(xmlcatalog)
+
 SConscript(dirs=['tests'])
 

@@ -1,4 +1,10 @@
 
+an xmlobject can provide a way to generate a template that other processes
+might fill in more easily, such as spitting out xml with all of the fields
+replaced with shell variable expansion, ie, <filename>$filename</filename>.
+A shell script can set the values it wants to fill in, then evaluate the
+template.  Or can XPath/Pathan/Xalan do that just as well?
+
 need a way to add xmlobjects as members of other objects.  treat this is a
 case of proxy interface, except the nodes on the proxy are not rooted at
 the top level but under the interface's value node in the xml document.  so

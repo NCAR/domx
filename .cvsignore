@@ -3,4 +3,6 @@
 Doxyfile
 Makefile
 Makefile.in
+xmlcatalog
 xmlfilescan
+Makefile.dep

@@ -209,6 +209,20 @@ XmlObjectInterface () :
 }
 
 
+void
+XmlObjectInterface::
+reset ()
+{
+  if (_xo && _xo->_doc)
+  {
+    if (_xo->createDocument())
+    {
+      updateInterfaces();
+    }
+  }
+}
+
+
 XmlObjectInterface& 
 XmlObjectInterface::
 operator= (const XmlObjectInterface& rhs_const)
@@ -519,6 +533,16 @@ fromXML (const std::string& in)
     return true;
   }
   return false;
+}
+
+
+bool
+XmlObjectInterface::
+fromXML (std::istream& in)
+{
+  std::ostringstream data;
+  data << in.rdbuf();
+  return fromXML (data.str());
 }
 
 

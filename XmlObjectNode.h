@@ -25,26 +25,12 @@ namespace domx
   {
   public:
 
-    /**
-     * Get the typed value of the named node member.
-     **/
-    template <typename T>
-    void
-    get (const std::string& name, T& value)
+    std::string
+    getString (const xstring& name)
     {
-      xstring xvalue;
-      getText (name, xvalue);
-      std::istringstream os (xvalue);
-      os >> value;
-    }
-
-    template <typename T>
-    void
-    set (const std::string& name, const T& value)
-    {
-      std::ostringstream os;
-      os << value;
-      setText (name, xstring(os.str()));
+      xstring value;
+      getText (name, value);
+      return value;
     }
 
     virtual

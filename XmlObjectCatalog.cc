@@ -34,6 +34,11 @@ namespace domx
     XmlObjectMember<string> _path;
     XmlObjectCatalog* _that;
 
+    // Note that root is not preserved, so that root can change as the
+    // catalog is migrated between systems, and since specifying root would
+    // be superfluous, as its already known by the time the catalog is
+    // opened.
+    string _root;
     logx::EventSource<XmlObjectCatalogP> failures;
 
     // Current state, which determines which operations are allowed.
@@ -50,10 +55,12 @@ namespace domx
     }
   
     void
-    setPath (const std::string& name, const std::string& dir)
+    setPath (const std::string& path)
     {
-      _name = name;
-      _path = dir + "/" + name + ".catalog";
+      // Keep the fully qualified path as the name.
+      _path = path;
+      _name = path;
+      _root = XmlObjectCatalog::rootCatalogDirectory();
     }
 
     bool
@@ -83,7 +90,13 @@ namespace domx
     string
     objectPath(const std::string& id)
     {
-      return _path() + "/" + id + ".xml";
+      return getDirectory() + "/" + id + ".xml";
+    }
+
+    string
+    getDirectory()
+    {
+      return _root + "/" + _path();
     }
 
     // Error queue.
@@ -93,16 +106,37 @@ namespace domx
 
 }
 
+
 namespace
 {
-  std::string
-  getSystemCatalogDir()
+  std::string ROOT_DIRECTORY;
+}
+
+
+std::string
+XmlObjectCatalog::
+rootCatalogDirectory()
+{
+  // Check for an environment variable to override the default, but
+  // anything set explicitly with setRootCatalogDirectory() will always
+  // take precedence.
+  if (ROOT_DIRECTORY.length() == 0)
   {
+    ROOT_DIRECTORY = "/var/xmlobjects";
     char* dir = getenv("DOMX_SYSTEM_CATALOG_DIR");
     if (dir)
-      return dir;
-    return "/var/tmp";
+      ROOT_DIRECTORY = dir;
   }
+  return ROOT_DIRECTORY;
+}
+
+
+void
+XmlObjectCatalog::
+setRootCatalogDirectory(const std::string& dir)
+{
+  if (dir.length() > 0)
+    ROOT_DIRECTORY = dir;
 }
 
 
@@ -115,9 +149,22 @@ XmlObjectCatalog()
 
 bool
 XmlObjectCatalog::
-open(const std::string& name, const std::string& dir, bool system_wide)
+open(const std::string& path)
 {
-  _mp->setPath (name, dir);
+  // Make sure the parent catalogs can be opened or created.
+  string::size_type slash = path.rfind ('/');
+  if (slash != string::npos)
+  {
+    XmlObjectCatalog parent;
+    string pname = path.substr(0, slash);
+    if (!parent.open (pname))
+    {
+      _mp->failures() << "could not open " 
+		      << pname << ": " << parent.lastError();
+      return false;
+    }
+  }
+  _mp->setPath (path);
 
   // Try to create this directory or verify that the
   // directory exists, but only this once.  If it doesn't
@@ -127,42 +174,27 @@ open(const std::string& name, const std::string& dir, bool system_wide)
   if (_mp->verifyDirectory())
   {
     _mp->_state = XmlObjectCatalogP::OPEN;
-    if (system_wide)
-      registerCatalog();
     return true;
   }
   return false;
 }
+
 
 
 bool
 XmlObjectCatalog::
-open (const std::string& name)
+open (XmlObjectCatalog& parent, const std::string& name)
 {
-  XmlObjectCatalog syscat;
-  if (! syscat.open  ("system", getSystemCatalogDir(), false))
+  if (!parent.isOpen())
   {
-    _mp->failures() << "opening " << name
-		    << ": could not open system catalog: "
-		    << syscat.lastError();
+    _mp->failures() << "cannot open: " << name
+		    << ", parent catalog is not open.";
     return false;
   }
-  if (! syscat.load (name, _mp))
-  {
-    _mp->failures() << "could not load " << name
-		    << "from system catalog: "
-		    << syscat.lastError();
-    return false;
-  }
-  _mp->_state = XmlObjectCatalogP::CLOSED;
-  if (_mp->verifyDirectory())
-  {
-    _mp->_state = XmlObjectCatalogP::OPEN;
-    return true;
-  }
-  return false;
+  // Append the given name to the parent's path to get the full path
+  // of the catalog being opened.
+  return open (parent._mp->_path() + "/" + name);
 }
-
 
 
 bool
@@ -170,14 +202,14 @@ XmlObjectCatalog::
 registerCatalog()
 {
   XmlObjectCatalog syscat;
-  if (! syscat.open  ("system", getSystemCatalogDir(), false))
+  if (! syscat.open  ("system"))
   {
     _mp->failures() << "registering " << name()
 		    << ": could not open system catalog: "
 		    << syscat.lastError();
     return false;
   }
-  if (! syscat.insert (name(), _mp))
+  if (! syscat.insert (dotName(), _mp))
   {
     _mp->failures() << "registering " << name()
 		    << ": insert failed: " << syscat.lastError();
@@ -187,11 +219,26 @@ registerCatalog()
 }
 
 
+
 std::string
 XmlObjectCatalog::
 name()
 {
-  return _mp->_name();
+  return _mp->_path();
+}
+
+
+std::string
+XmlObjectCatalog::
+dotName()
+{
+  string n = name();
+  string::size_type p;
+  while ((p = n.find('/')) != string::npos)
+  {
+    n[p] = '.';
+  }
+  return n;
 }
 
 
@@ -207,7 +254,7 @@ bool
 XmlObjectCatalogP::
 verifyDirectory ()
 {
-  string spath(_path());
+  string spath(getDirectory());
   const char* path = spath.c_str();
   struct stat sbuf;
   int result = ::mkdir (path, 0775);
@@ -348,7 +395,7 @@ keys(key_set_t& kset)
   if (! isOpen())
     return false;
 
-  string path = _mp->_path();
+  string path = _mp->getDirectory();
   DIR* dir = opendir (path.c_str());
   if (! dir)
   {

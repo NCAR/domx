@@ -1,0 +1,23 @@
+
+CXXSRCS = \
+    XML.cc XmlObjectInterface.cc \
+    XmlObjectCatalog.cc XmlTime.cc XmlFileObject.cc \
+    XmlObjectReference.cc XmlFileReference.cc
+
+
+OBJS = $(CXXSRCS:.cc=.o)
+
+INCLUDES = $(LOGX_INCLUDES) $(XERCESC_INCLUDES)
+
+NormalLibraryTarget (domx, $(OBJS))
+
+InstallLibrary (domx, $(LIBDIR))
+
+LIBS = libdomx.a $(XERCESC_LIBS) $(LOGX_LIBS) 
+
+CccProgramTarget(xmlfilescan,xmlfilescan.o,$(DEPLIBS),$(LIBS),$(SYSLIBS))
+CccProgramTarget(xmlcatalog,xmlcatalog.o,$(DEPLIBS),$(LIBS),$(SYSLIBS))
+
+DependTarget ()
+
+

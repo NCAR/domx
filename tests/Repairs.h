@@ -12,10 +12,12 @@ class Repairs : public Vehicle
 
 public:
 
+  XmlObjectMember<double> SparkGap;
   XmlObjectMember<XmlTime> NextVisit;
 
   Repairs() :
     _xi(newNode ("repairs", &construct)),
+    SparkGap (_xi, "sparkgap", 0),
     NextVisit (_xi, "nextvisit")
   {
   }
@@ -31,29 +33,27 @@ public:
   void
   setMechanicName (const std::string& mechanicname)
   {
-    _xi->set ("mechanicname", mechanicname);
+    _xi->setText ("mechanicname", mechanicname);
   }
 
   std::string
   getMechanicName ()
   {
-    std::string mechanicname;
-    _xi->get ("mechanicname", mechanicname);
+    domx::xstring mechanicname;
+    _xi->getText ("mechanicname", mechanicname);
     return mechanicname;
   }
 
   void
   setSparkGap (double d)
   {
-    _xi->set ("sparkgap", d);
+    SparkGap = d;
   }
 
   double
   getSparkGap ()
   {
-    double d;
-    _xi->get ("sparkgap", d);
-    return d;
+    return SparkGap();
   }
 
 };

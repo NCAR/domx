@@ -4,10 +4,6 @@
 //
 
 
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <unistd.h>
-
 #include <iostream>
 #include <unistd.h>
 #include "XmlFileObject.h"
@@ -18,7 +14,6 @@
 using std::string;
 
 #include "logx/Logging.h"
-#include "logx/system_error.h"
 
 LOGGING("xmlfilescan");
 
@@ -35,14 +30,7 @@ main (int argc, char* argv[])
   int errors = 0;
   logx::ParseLogArgs (argc, argv);
   int md5 = 0;
-
-  char cwdbuf[1024];
-  const char* cwd = getcwd(cwdbuf, sizeof(cwdbuf));
-  if (!cwd)
-  {
-    ELOG << "Current working directory path too long";
-    exit (1);
-  }
+  int timekey = 0;
 
   int i = 1;
   while (i < argc)
@@ -50,6 +38,8 @@ main (int argc, char* argv[])
     string opt(argv[i++]);
     if (opt == "--md5")
       md5 = 1;
+    else if (opt == "--time")
+      timekey = 1;
     else
     {
       --i;
@@ -63,63 +53,35 @@ main (int argc, char* argv[])
     cerr << "Usage: " << argv[0] << " [options]"
 	 << " <catalog> <file> [<file> ...]\n";
     cerr << "Options:\n"
-	 << " --md5     Compute md5 sums for each file and record in catalog."
-	 << endl;
+	 << " --md5    Compute md5 sums for each file and record in catalog.\n"
+	 << " --time   Insert file using its last modified time as the key.\n";
     exit (1);
   }
 
   XmlObjectCatalog catalog;
-  if (! catalog.open (argv[i++], ".", false))
+  if (! catalog.open (argv[i++]))
   {
     ELOG << "Could not open catalog.";
     exit (1);
   }
 
-  struct stat sbuf;
   for (; i < argc; ++i)
   {
-    if (stat (argv[i], &sbuf) < 0)
-    {
-      ++errors;
-      ELOG << logx::system_error("calling stat", argv[i]);
-      continue;
-    }
-    if (! S_ISREG(sbuf.st_mode))
-    {
-      ++errors;
-      ELOG << "not a regular file, skipping: " << argv[i];
-      continue;
-    }
     XmlFileObject xfo;
-    xfo.Size = sbuf.st_size;
-    xfo.Description = "generic file scanned by xmlfilescan";
-    xfo.Changed = sbuf.st_ctime;
-    xfo.Modified = sbuf.st_mtime;
-    xfo.Accessed = sbuf.st_atime;
-
-    // Figure out filename components: if path is not absolute,
-    // first prepend the current working directory.
-    string filepath = argv[i];
-    if (filepath[0] != '/')
+    if (! xfo.scan(argv[i]))
     {
-      filepath = string(cwd) + '/' + filepath;
+      ++errors;
+      continue;
     }
-    // Now parse out the directory and filename.
-    string dirname = filepath;
-    string filename = filepath;
-    string::size_type n = filepath.rfind ('/');
-    filename.erase (0, n+1);
-    dirname.erase (n, string::npos);
-    xfo.Name = filename;
-    xfo.Directory = dirname;
-
-    // Once the name and path are set, we can ask it to compute its own md5.
     if (md5 && !xfo.computeMD5 ())
     {
       ELOG << "checksum failed for " << string(argv[i]);
       ++errors;
     }
-    catalog.insert (xfo.timekey(), &xfo);
+    string key = xfo.Name();
+    if (timekey)
+      key = xfo.modifiedTimeKey();
+    catalog.insert (key, &xfo);
   }
   return errors;
 }

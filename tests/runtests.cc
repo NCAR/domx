@@ -206,7 +206,8 @@ test_xmlobjectcatalog()
 
   // Create a catalog.
   XmlObjectCatalog vehicles;
-  Check (vehicles.open ("family-cars", ".", false));
+  domx::XmlObjectCatalog::setRootCatalogDirectory(".");
+  Check (vehicles.open ("family-cars"));
 
   Car c;
   make_mazda(c);

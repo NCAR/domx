@@ -7,6 +7,7 @@
 #define _domx_XmlObjectMember_h_
 
 #include "XmlObjectNode.h"
+#include <map>
 
 namespace domx
 {
@@ -39,6 +40,79 @@ namespace domx
 
 
   template <typename T>
+  struct StreamStorage
+  {
+    void
+    fromString (const std::string text, T& value)
+    {
+      std::istringstream os (text);
+      os >> value;
+    }
+
+    std::string
+    toString (const T& value)
+    {
+      std::ostringstream os;
+      os << value;
+      return os.str();
+    }
+  };
+
+
+  /**
+   * A storage class for enumerated types.  Particular types must
+   * subclass this template and generate the map from value to string
+   * in the constructor, but otherwise the base template takes care of
+   * implementing the storage interface required by XmlObjectMember.
+   **/
+  template <class T>
+  class EnumStorage
+  {
+  public:
+    typedef T enum_type;
+
+    void
+    fromString (const std::string& value_in, enum_type& val)
+    {
+      typename enum_map::iterator it;
+      for (it = enums.begin(); it != enums.end(); ++it)
+      {
+	if (it->second == value)
+	{
+	  val = it->first;
+	  break;
+	}
+      }
+    }
+
+    std::string
+    toString (const enum_type& v)
+    {
+      return enums[v];
+    }
+
+  protected:
+    typedef std::map<enum_type,std::string> enum_map;
+    enum_map enums;
+  };
+
+
+  struct BoolStorage : public EnumStorage<bool>
+  {
+    BoolStorage() 
+    {
+      enums[true] = "true";
+      enums[false] = "false";
+    }
+  };
+
+
+  /**
+   * This is a type wrapper which takes care of setting and getting the
+   * text node value when the member is accessed.  The translation to and
+   * from text form is parameterized with a storage class.
+   **/
+  template <typename T, typename Storage = StreamStorage<T> >
   class XmlObjectMember : public XmlObjectMemberBase
   {
   public:
@@ -52,21 +126,21 @@ namespace domx
     inline XmlObjectMember&
     set (const T& v)
     {
-      _node->set (_name, v);
+      _node->setText (_name, _storage.toString(v));
       return *this;
     }
 
     inline void
     get (T& v)
     {
-      _node->get (_name, v);
+      _storage.fromString (_node->getString(_name), v);
     }
 
     inline T
     get ()
     {
       T v;
-      _node->get (_name, v);
+      _storage.fromString (_node->getString(_name), v);
       return v;
     }
 
@@ -90,9 +164,15 @@ namespace domx
 
   private:
 
+    Storage _storage;
     T _default;
 
   };
+
+
+  typedef XmlObjectMember<bool, BoolStorage> XmlBoolean;
+  typedef XmlObjectMember<std::string> XmlString;
+  typedef XmlObjectMember<int> XmlInteger;
 
 }
 

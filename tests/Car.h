@@ -34,28 +34,28 @@ public:
   void
   setMake (const std::string& make)
   {
-    _xi->set ("make", make);
+    _xi->setText ("make", make);
   }
 
   std::string
   getMake ()
   {
-    std::string make;
-    _xi->get ("make", make);
+    domx::xstring make;
+    _xi->getText ("make", make);
     return make;
   }
 
   void
   setModel (const std::string& model)
   {
-    _xi->set ("model", model);
+    _xi->setText ("model", model);
   }
 
   std::string
   getModel ()
   {
-    std::string model;
-    _xi->get ("model", model);
+    domx::xstring model;
+    _xi->getText ("model", model);
     return model;
   }
 
