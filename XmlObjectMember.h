@@ -103,7 +103,7 @@ namespace domx
       typename enum_map::iterator it;
       for (it = enums.begin(); it != enums.end(); ++it)
       {
-	if (it->second == value)
+	if (it->second == value_in)
 	{
 	  val = it->first;
 	  break;
