@@ -10,24 +10,10 @@
 
 // Includes for Xerces-C
 #include <xercesc/dom/DOM.hpp>
+#include <xercesc/dom/DOMDocument.hpp>
 #include <xercesc/util/XMLString.hpp>
 #include <xercesc/sax/HandlerBase.hpp>
 #include <xercesc/parsers/XercesDOMParser.hpp>
-
-//using xercesc::DOMNode;
-using xercesc::DOMDocument;
-using xercesc::DOMElement;
-using xercesc::DOMError;
-using xercesc::DOMErrorHandler;
-
-using xercesc::XMLString;
-using xercesc::XMLException;
-using xercesc::XMLPlatformUtils;
-
-using xercesc::SAXParseException;
-using xercesc::ErrorHandler;
-
-using xercesc::XercesDOMParser;
 
 namespace log4cpp
 {
@@ -38,6 +24,21 @@ namespace log4cpp
 //
 namespace domx
 {
+
+  using xercesc::DOMNode;
+  using xercesc::DOMDocument;
+  using xercesc::DOMElement;
+  using xercesc::DOMError;
+  using xercesc::DOMErrorHandler;
+
+  using xercesc::XMLString;
+  using xercesc::XMLException;
+  using xercesc::XMLPlatformUtils;
+
+  using xercesc::SAXParseException;
+  using xercesc::ErrorHandler;
+
+  using xercesc::XercesDOMParser;
 
   /**
    * Make sure the Xerces-C library initialization routine has been called.
