@@ -77,6 +77,7 @@ std::istream&
 operator>>(std::istream& in, domx::XmlTime& xt)
 {
   struct tm tm;
+  memset(&tm, 0, sizeof(tm));
   std::string dtext, ttext;
   in >> dtext;
   in >> ttext;
