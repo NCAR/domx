@@ -42,6 +42,8 @@ namespace domx
   class xstring : public std::string
   {
   public:
+    typedef std::string string;
+
     const XMLCh *
     xc() const
     {
@@ -135,7 +137,7 @@ namespace domx
   void
   setAttribute (DOMElement* node, const xstring& name, T value)
   {
-    ostringstream os;
+    std::ostringstream os;
     os << value;
     node->setAttribute (name, xstring(os.str()));
   }
@@ -148,6 +150,8 @@ namespace domx
   class ErrorFormatter
   {
   public:
+    typedef std::string string;
+
     // I purposefully decided to leave these non-const to give subclasses
     // more flexibility, such as allowing each formatted string to include
     // the current error count.  The implication is that we can't use a
