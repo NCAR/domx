@@ -1,7 +1,7 @@
 // $Id$
 
 #include "XML.h"
-#include "Logging.h"
+#include <logx/Logging.h>
 
 #include <iostream>
 #include <map>
