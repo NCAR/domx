@@ -25,31 +25,40 @@ namespace domx
   }
 
 
-    DOMElement*
-    asElement (DOMNode* node)
+  DOMElement*
+  asElement (DOMNode* node)
+  {
+    DOMElement* enode = 0;
+    if (node->getNodeType() == DOMNode::ELEMENT_NODE)
     {
-      DOMElement* enode = 0;
-      if (node->getNodeType() == DOMNode::ELEMENT_NODE)
-      {
-	enode = (DOMElement *)node;
-      }
-      return enode;
+      enode = (DOMElement *)node;
     }
+    return enode;
+  }
 
 
-    bool
-    getAttribute (DOMNode* node, const XMLCh* name, xstring *value)
+  void
+  setAttribute (DOMNode* node, const xstring& name, const xstring& value)
+  {
+    DOMElement* enode = asElement (node);
+    if (enode != 0)
+      enode->setAttribute (name, value);
+  }
+
+
+  bool
+  getAttribute (DOMNode* node, const XMLCh* name, xstring *value)
+  {
+    bool found = false;
+    if (node->getNodeType() == DOMNode::ELEMENT_NODE)
     {
-      bool found = false;
-      if (node->getNodeType() == DOMNode::ELEMENT_NODE)
-      {
-	DOMElement* enode = (DOMElement *)node;
-	found = enode->hasAttribute (name);
-	if (found && value)
-	  *value = enode->getAttribute (name);
-      }
-      return found;
+      DOMElement* enode = (DOMElement *)node;
+      found = enode->hasAttribute (name);
+      if (found && value)
+	*value = enode->getAttribute (name);
     }
+    return found;
+  }
 
 
 #ifdef notdef

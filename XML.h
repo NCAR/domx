@@ -107,6 +107,14 @@ namespace domx
 
 
   /**
+   * Convenience function which tests whether node is an element node
+   * and returns a DOMElement pointer to that node if so.  Otherwise
+   * returns null.
+   **/
+  DOMElement*
+  asElement (DOMNode* node);
+
+  /**
    * Check the DOM node for the named attribute.  If the
    * attribute exists, return true.  If value is nonzero, then set it
    * to the value of the attribute.
@@ -120,11 +128,8 @@ namespace domx
     return getAttribute(node, xstring(name), value);
   }
 
-  inline void
-  setAttribute (DOMElement* node, const xstring& name, const xstring& value)
-  {
-    node->setAttribute (name, value);
-  }
+  void
+  setAttribute (DOMNode* node, const xstring& name, const xstring& value);
 
   template <typename T>
   void
@@ -137,15 +142,6 @@ namespace domx
 
   void
   appendTextElement (DOMNode* node, const xstring& tag, const xstring& data);
-
-
-  /**
-   * Convenience function which tests whether node is an element node
-   * and returns a DOMElement pointer to that node if so.  Otherwise
-   * returns null.
-   **/
-  DOMElement*
-  asElement (DOMNode* node);
 
 
 
