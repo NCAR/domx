@@ -119,9 +119,16 @@ namespace domx
 
     xstring &assign (const XMLCh *xc)
     {
-      char *p = XMLString::transcode(xc);
-      string::operator= (p);
-      delete [] p;
+      if (xc)
+      {
+	char *p = XMLString::transcode(xc);
+	string::operator= (p);
+	delete [] p;
+      }
+      else
+      {
+	string::operator= ("");
+      }
       return *this;
     }
 
@@ -193,6 +200,21 @@ namespace domx
    **/
   std::string
   getTextElement (xercesc::DOMNode* node);
+
+  /**
+   * Write the given XML document @p doc as text to the ostream @p out,
+   * beginning with the document element @p node and using @p indent as the
+   * number of spaces to indent the node.
+   **/
+  std::ostream&
+  domToStream (std::ostream& out, DOMDocument* doc, DOMNode* node, int indent);
+
+  /**
+   * Prune all text nodes which are empty or have only whitespace, and trim
+   * leading and trailing whitespace from all other text nodes.
+   **/
+  void
+  pruneWhitespace (DOMNode* node);
 
   class ErrorFormatter
   {

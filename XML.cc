@@ -11,6 +11,7 @@
 LOGGING("domx");
 
 using std::string;
+using std::endl;
 
 namespace domx
 {
@@ -93,7 +94,7 @@ namespace domx
   asElement (xercesc::DOMNode* node)
   {
     DOMElement* enode = 0;
-    if (node->getNodeType() == xercesc::DOMNode::ELEMENT_NODE)
+    if (node && (node->getNodeType() == xercesc::DOMNode::ELEMENT_NODE))
     {
       enode = (DOMElement *)node;
     }
@@ -153,6 +154,122 @@ namespace domx
     return att != 0;
   }
 #endif
+
+  std::ostream&
+  domToStream (std::ostream& out, DOMDocument* doc, DOMNode* node, int indent)
+  {
+    xstring node_name = node->getNodeName();
+    std::string tab(indent, ' ');
+    out << tab << "<" << node_name;
+
+    xercesc::DOMNamedNodeMap* attmap = node->getAttributes();
+    for (XMLSize_t i = 0; attmap != 0 && i < attmap->getLength(); ++i)
+    {
+      DOMNode *attnode = attmap->item (i);
+      out << " " << xstring(attnode->getNodeName()) << "='"
+	  << xstring(attnode->getNodeValue()) << "'";
+    }
+
+    // If node type is text, then check length and surround it by
+    // the element tags on separate lines.
+    DOMNode* child = node->getFirstChild();
+    bool first = true;
+    while (child)
+    {
+      if (first)
+	out << ">";
+      tab = string(indent, ' ');
+      if (child->getNodeType () == DOMNode::TEXT_NODE)
+      {
+	xstring text = child->getNodeValue();
+	if (text.length() + (unsigned)indent > 72)
+	{
+	  out << std::endl << tab << text << std::endl;
+	}
+	else
+	{
+	  out << text;
+	  tab = "";
+	}
+      }
+      else
+      {
+	if (first)
+	  out << std::endl;
+	domToStream (out, doc, child, indent+2);
+      }
+      first = false;
+      child = child->getNextSibling ();
+    }
+    if (first)
+    {
+      // no children
+      out << "/>" << std::endl;
+    }
+    else
+    {
+      out << tab << "</" << node_name << ">" << endl;
+    }
+    return out;
+  }
+
+
+  void
+  trimTextNode (DOMNode* node, DOMNode* tnode)
+  {
+    xstring text = tnode->getNodeValue();
+    DLOG << "found text node, value:" << text;
+    string::size_type length = text.length();
+
+    // trim leading and trailing whitespace
+    text.erase(0, text.find_first_not_of(" \t\n"));
+    text.erase(text.find_last_not_of(" \t\n")+1);
+
+    // If the text is now empty, then delete the node.  Otherwise
+    // replace the text if it changed.
+    if (text.length() == 0)
+    {
+      DLOG << "pruning text node";
+      node->removeChild (tnode);
+      tnode->release();
+    }
+    else if (text.length() != length)
+    {
+      DLOG << "changing text node: " << text;
+      tnode->setNodeValue (text);
+    }
+    else
+    {
+      DLOG << "text node unchanged.";
+    }
+  }
+
+
+  void
+  pruneWhitespace (DOMNode* node)
+  {
+    DLOG << "entering pruneWhitespace";
+    if (! node)
+      return;
+    DOMNode* child = node->getFirstChild();
+    while (child)
+    {
+      xstring node_name = child->getNodeName();
+      DLOG << "checking node " << node_name;
+      DOMNode* tnode = child;
+      child = child->getNextSibling ();
+      if (tnode->getNodeType () == DOMNode::TEXT_NODE)
+      {
+	trimTextNode (node, tnode);
+      }
+      else
+      {
+	pruneWhitespace (tnode);
+      }
+    }
+    DLOG << "leaving pruneWhitespace";
+  }
+
 
   string 
   ErrorFormatter::warning(const SAXParseException& toCatch)
