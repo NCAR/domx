@@ -18,10 +18,27 @@ namespace log4cpp
   class Category;
 }
 
+class XercesDOMParser;
+
 // Our extensions to DOM reside in the DOMX namespace.
 //
 namespace domx
 {
+
+  /**
+   * Make sure the Xerces-C library initialization routine has been called.
+   * This routine does nothing if initialization has already succeeded in a
+   * prior call.
+   **/
+  bool
+  xmlInitialize ();
+
+  /**
+   * Return a basic parser, taking care to first call xmlInitialize(),
+   * and also setting up a simple error rerporter.
+   **/
+  XercesDOMParser *
+  createDefaultParser();
 
   /**
    * A class for easily interchanging between std::string and XMLCh*.  It

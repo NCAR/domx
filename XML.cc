@@ -6,16 +6,63 @@
 #include <iostream>
 #include <map>
 
+#include <xercesc/parsers/XercesDOMParser.hpp>
+#include <xercesc/util/PlatformUtils.hpp>
 
-namespace
-{
-  log4cpp::CategoryStream::Separator endlog = log4cpp::CategoryStream::ENDLINE;
-}
+LOGGING("domx");
 
 using std::string;
 
 namespace domx
 {
+
+  bool
+  xmlInitialize ()
+  {
+    static bool initialized = false;
+
+    if (initialized)
+      return true;
+
+    // Initialize the XML4C2 system
+    try
+    {
+      XMLPlatformUtils::Initialize();
+      initialized = true;
+    }
+    catch (const XMLException& xe)
+    {
+      ELOG << "Error during Xerces-c Initialization.\n"
+	   << "  Exception message:"
+	   << xe.getMessage() << endlog;
+    }
+
+    return initialized;
+  }
+
+
+  XercesDOMParser *
+  createDefaultParser()
+  {
+    if (!domx::xmlInitialize ())
+      return 0;
+    //
+    //  Create our parser, then attach an error handler to the parser.
+    //  The parser will call back to methods of the ErrorHandler if it
+    //  discovers errors during the course of parsing the XML document.
+    //
+    XercesDOMParser *parser;
+    parser = new XercesDOMParser;
+    parser->setValidationScheme(XercesDOMParser::Val_Auto);
+    parser->setDoNamespaces(false);
+    ErrorHandler *errReporter = 
+      new StreamErrorLogger();
+    parser->setErrorHandler(errReporter);
+    parser->setCreateEntityReferenceNodes(false);
+    return parser;
+  }
+
+
   void
   appendTextElement (DOMNode* node, const xstring& tag, const xstring& data)
   {
