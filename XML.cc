@@ -6,7 +6,6 @@
 #include <iostream>
 #include <map>
 
-#include <xercesc/parsers/XercesDOMParser.hpp>
 #include <xercesc/util/PlatformUtils.hpp>
 
 LOGGING("domx");
@@ -64,7 +63,7 @@ namespace domx
 
 
   void
-  appendTextElement (DOMNode* node, const xstring& tag, const xstring& data)
+  appendTextElement (xercesc::DOMNode* node, const xstring& tag, const xstring& data)
   {
     DOMDocument* doc = node->getOwnerDocument();
     DOMElement* tnode = doc->createElement (tag);
@@ -74,13 +73,13 @@ namespace domx
 
 
   std::string
-  getTextElement (DOMNode* node)
+  getTextElement (xercesc::DOMNode* node)
   {
     xstring value;
-    DOMNode* child = node->getFirstChild();
+    xercesc::DOMNode* child = node->getFirstChild();
     while (child)
     {
-      if (child->getNodeType() == DOMNode::TEXT_NODE)
+      if (child->getNodeType() == xercesc::DOMNode::TEXT_NODE)
       {
 	value = child->getNodeValue();
       }
@@ -91,10 +90,10 @@ namespace domx
 
 
   DOMElement*
-  asElement (DOMNode* node)
+  asElement (xercesc::DOMNode* node)
   {
     DOMElement* enode = 0;
-    if (node->getNodeType() == DOMNode::ELEMENT_NODE)
+    if (node->getNodeType() == xercesc::DOMNode::ELEMENT_NODE)
     {
       enode = (DOMElement *)node;
     }
@@ -104,7 +103,7 @@ namespace domx
 
   template <>
   void
-  setAttribute (DOMNode* node, const xstring& name, const xstring& value)
+  setAttribute (xercesc::DOMNode* node, const xstring& name, const xstring& value)
   {
     DOMElement* enode = asElement (node);
     if (enode != 0)
@@ -114,10 +113,10 @@ namespace domx
 
   template <>
   bool
-  getAttribute (DOMNode* node, const xstring& name, xstring *value)
+  getAttribute (xercesc::DOMNode* node, const xstring& name, xstring *value)
   {
     bool found = false;
-    if (node->getNodeType() == DOMNode::ELEMENT_NODE)
+    if (node->getNodeType() == xercesc::DOMNode::ELEMENT_NODE)
     {
       DOMElement* enode = (DOMElement *)node;
       found = enode->hasAttribute (name);

@@ -12,13 +12,27 @@
 #include <xercesc/dom/DOM.hpp>
 #include <xercesc/util/XMLString.hpp>
 #include <xercesc/sax/HandlerBase.hpp>
+#include <xercesc/parsers/XercesDOMParser.hpp>
+
+//using xercesc::DOMNode;
+using xercesc::DOMDocument;
+using xercesc::DOMElement;
+using xercesc::DOMError;
+using xercesc::DOMErrorHandler;
+
+using xercesc::XMLString;
+using xercesc::XMLException;
+using xercesc::XMLPlatformUtils;
+
+using xercesc::SAXParseException;
+using xercesc::ErrorHandler;
+
+using xercesc::XercesDOMParser;
 
 namespace log4cpp
 {
   class Category;
 }
-
-class XercesDOMParser;
 
 // Our extensions to DOM reside in the DOMX namespace.
 //
@@ -121,7 +135,7 @@ namespace domx
    * returns null.
    **/
   DOMElement*
-  asElement (DOMNode* node);
+  asElement (xercesc::DOMNode* node);
 
   /**
    * Check the DOM node for the named attribute.  If the
@@ -130,7 +144,7 @@ namespace domx
    **/
   template <typename T>
   bool
-  getAttribute (DOMNode* node, const xstring& name, T* value)
+  getAttribute (xercesc::DOMNode* node, const xstring& name, T* value)
   {
     xstring xvalue;
     if (getAttribute<xstring> (node, name, &xvalue))
@@ -147,17 +161,17 @@ namespace domx
 
   template <>
   bool
-  getAttribute (DOMNode* node, const xstring& name, xstring *value);
+  getAttribute (xercesc::DOMNode* node, const xstring& name, xstring *value);
 
   inline bool
-  getAttribute (DOMNode* node, const char* name, xstring *value = 0)
+  getAttribute (xercesc::DOMNode* node, const char* name, xstring *value = 0)
   {
     return getAttribute<xstring> (node, xstring(name), value);
   }
 
   template <typename T>
   void
-  setAttribute (DOMNode* node, const xstring& name, const T& value)
+  setAttribute (xercesc::DOMNode* node, const xstring& name, const T& value)
   {
     std::ostringstream os;
     os << value;
@@ -166,18 +180,18 @@ namespace domx
 
   template <>
   void
-  setAttribute (DOMNode* node, 
+  setAttribute (xercesc::DOMNode* node, 
 		const xstring& name, const xstring& value);
 
   void
-  appendTextElement (DOMNode* node, const xstring& tag, const xstring& data);
+  appendTextElement (xercesc::DOMNode* node, const xstring& tag, const xstring& data);
 
   /**
    * Return the value of the child text node of the given node, or an
    * empty string if the child is not a text node or does not exist.
    **/
   std::string
-  getTextElement (DOMNode* node);
+  getTextElement (xercesc::DOMNode* node);
 
   class ErrorFormatter
   {
