@@ -4,18 +4,7 @@
 #include "Logging.h"
 
 #include <iostream>
-#include <strstream>
 #include <map>
-
-using std::ostrstream;
-
-ostream& operator<< (ostream& target, const DOMString& s)
-{
-  char *p = s.transcode();
-  target << p;
-  delete [] p;
-  return target;
-}
 
 
 namespace
@@ -26,7 +15,44 @@ namespace
 
 namespace domx
 {
+  void
+  appendTextElement (DOMNode* node, const xstring& tag, const xstring& data)
+  {
+    DOMDocument* doc = node->getOwnerDocument();
+    DOMElement* tnode = doc->createElement (tag);
+    tnode->appendChild (doc->createTextNode (data));
+    node->appendChild (tnode);
+  }
 
+
+    DOMElement*
+    asElement (DOMNode* node)
+    {
+      DOMElement* enode = 0;
+      if (node->getNodeType() == DOMNode::ELEMENT_NODE)
+      {
+	enode = (DOMElement *)node;
+      }
+      return enode;
+    }
+
+
+    bool
+    getAttribute (DOMNode* node, const XMLCh* name, xstring *value)
+    {
+      bool found = false;
+      if (node->getNodeType() == DOMNode::ELEMENT_NODE)
+      {
+	DOMElement* enode = (DOMElement *)node;
+	found = enode->hasAttribute (name);
+	if (found && value)
+	  *value = enode->getAttribute (name);
+      }
+      return found;
+    }
+
+
+#ifdef notdef
   bool
   nodeFindAttribute (Node node, DOMString name, string *value = 0)
   {
@@ -51,39 +77,39 @@ namespace domx
     }
     return att != 0;
   }
-
+#endif
 
   string 
   ErrorFormatter::warning(const SAXParseException& toCatch)
   {
-    ostrstream out;
-    out << "Error at file \"" << DOMString(toCatch.getSystemId())
+    ostringstream out;
+    out << "Error at file \"" << xstring(toCatch.getSystemId())
 	<< "\", line " << toCatch.getLineNumber()
 	<< ", column " << toCatch.getColumnNumber()
 	<< "\n   Message: " 
-	<< DOMString(toCatch.getMessage());
+	<< xstring(toCatch.getMessage());
     return out.str();
   }
 
   string ErrorFormatter::error(const SAXParseException& toCatch)
   {
-    ostrstream out;
-    out << "Error at file \"" << DOMString(toCatch.getSystemId())
+    ostringstream out;
+    out << "Error at file \"" << xstring(toCatch.getSystemId())
 	<< "\", line " << toCatch.getLineNumber()
 	<< ", column " << toCatch.getColumnNumber()
 	<< "\n   Message: " 
-	<< DOMString(toCatch.getMessage());
+	<< xstring(toCatch.getMessage());
     return out.str();
   }
 
   string ErrorFormatter::fatalError(const SAXParseException& toCatch)
   {
-    ostrstream out;
-    out << "Error at file \"" << DOMString(toCatch.getSystemId())
+    ostringstream out;
+    out << "Error at file \"" << xstring(toCatch.getSystemId())
 	<< "\", line " << toCatch.getLineNumber()
 	<< ", column " << toCatch.getColumnNumber()
 	<< "\n   Message: " 
-	<< DOMString(toCatch.getMessage());
+	<< xstring(toCatch.getMessage());
     return out.str();
   }
 
