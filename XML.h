@@ -69,7 +69,7 @@ namespace domx
     const XMLCh *
     xc() const
     {
-      delete mxc;
+      delete[] mxc;
       mxc = XMLString::transcode(this->c_str());
       return mxc;
     }
@@ -130,6 +130,12 @@ namespace domx
 	string::operator= ("");
       }
       return *this;
+    }
+
+    ~xstring ()
+    {
+      delete[] mxc;
+      mxc = 0;
     }
 
   private:
