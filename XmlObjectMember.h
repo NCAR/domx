@@ -39,6 +39,10 @@ namespace domx
   };
 
 
+  /**
+   * A template for converting generic types to and from strings using the
+   * stream operators and a string stream.
+   **/
   template <typename T>
   struct StreamStorage
   {
@@ -55,6 +59,28 @@ namespace domx
       std::ostringstream os;
       os << value;
       return os.str();
+    }
+  };
+
+
+  /**
+   * A template specialization for strings which shortcuts the conversion
+   * and avoids problems with stream input operators separating strings at
+   * whitespace.
+   **/
+  template <>
+  struct StreamStorage<std::string>
+  {
+    void
+    fromString (const std::string text, std::string& value)
+    {
+      value = text;
+    }
+
+    std::string
+    toString (const std::string& value)
+    {
+      return value;
     }
   };
 

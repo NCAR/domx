@@ -281,6 +281,21 @@ test_xmlfileobject()
 }
 
 
+
+int
+test_xmlstring()
+{
+  int errors = 0;
+  // Make sure that an xml string member preserves spaces.
+  XmlFileObject xfo;
+
+  std::string path = "this string has spaces";
+  xfo.Directory = path;
+  Check(xfo.Directory() == path);
+  return errors;
+}
+
+
 int 
 main(int argc, char* argv[])
 {
@@ -292,6 +307,7 @@ main(int argc, char* argv[])
     errors += test_xmlobjectcatalog();
     errors += test_xmltime();
     errors += test_xmlfileobject();
+    errors += test_xmlstring();
 
     if (errors == 0)
     {
