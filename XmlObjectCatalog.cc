@@ -9,6 +9,7 @@
 #include "logx/system_error.h"
 #include "logx/EventSource.h"
 #include <stdio.h>
+#include <unistd.h>    // for unlink()
 #include <sys/errno.h>
 #include <sys/types.h>
 #include <dirent.h>
