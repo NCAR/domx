@@ -1,4 +1,13 @@
 
+need a way to add xmlobjects as members of other objects.  treat this is a
+case of proxy interface, except the nodes on the proxy are not rooted at
+the top level but under the interface's value node in the xml document.  so
+the xmlobject member registers as an interface on the root implementation,
+but starts setupNode() at the node for the value element.  The interface
+needs to be registered anonymously so that multiple instances of the same
+interface can attached to an object without being returned as interfaces
+for the root document.
+
 objects can offer a method to generate a key to be used for an object, such
 as a timeKey method for XmlFile which prepends the time in a
 lexicographically sorted format and then appends the filename so that

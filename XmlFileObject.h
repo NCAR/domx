@@ -25,6 +25,11 @@ namespace domx
     XmlObjectMember<std::string> Name;
 
     /**
+     * A description of this file.
+     **/
+    XmlObjectMember<std::string> Description;
+
+    /**
      * The directory component of the file path.
      **/
     XmlObjectMember<std::string> Directory;
@@ -43,6 +48,7 @@ namespace domx
     XmlFileObject() :
       _xi(newNode("xmlfileobject")),
       Name (_xi, "filename"),
+      Description (_xi, "description"),
       Directory (_xi, "directory"),
       Size (_xi, "size"),
       Created (_xi, "created")
