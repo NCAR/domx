@@ -8,15 +8,15 @@
 #include <string>
 
 // Includes for Xerces-C
-#include <util/PlatformUtils.hpp>
-#include <util/XercesDefs.hpp>
-#include <parsers/DOMParser.hpp>
-#include <dom/DOM_DOMException.hpp>
-#include <dom/DOM.hpp>
-#include <dom/DOM_NodeList.hpp>
-#include <sax/SAXParseException.hpp>
-#include <sax/ErrorHandler.hpp>
+//#include <util/XercesDefs.hpp>
+#include <xercesc/dom/DOM.hpp>
+#include <xercesc/util/XMLString.hpp>
 
+//#include <dom/DOM_NodeList.hpp>
+//#include <sax/SAXParseException.hpp>
+//#include <sax/ErrorHandler.hpp>
+
+#ifdef notdef
 class ostream;
 ostream& operator<< (ostream& target, const DOMString& s);
 
@@ -24,73 +24,27 @@ namespace log4cpp
 {
     class Category;
 }
-
+#endif
 
 // Our extensions to DOM reside in the DOMX namespace.
 //
 namespace domx
 {
-    typedef DOM_Document Document;
-    typedef DOM_Node Node;
-    typedef DOM_DOMException DOMException;
-    typedef DOM_DocumentType DocumentType;
-
+#ifdef notdef
+    typedef DOMDocument Document;
+    typedef DOMNode Node;
+    typedef DOMDOMException DOMException;
+    typedef DOMDocumentType DocumentType;
     typedef void (*XMLConstructor)(Node &);
-
     void createFromNode (Node &node);
 
-    bool nodeFindAttribute (DOM_Node alist, 
+    bool nodeFindAttribute (DOMNode alist, 
 			    DOMString name, string *value = 0);
-    bool mapFindAttribute (DOM_NamedNodeMap alist, 
+    bool mapFindAttribute (DOMNamedNodeMap alist, 
 			   DOMString name, string *value = 0);
 
-    void Print (ostream &out, DOM_Node doc);
-
-    class ErrorFormatter
-    {
-    public:
-	// I purposefully decided to leave these non-const to give subclasses
-	// more flexibility, such as allowing each formatted string to include
-	// the current error count.  The implication is that we can't use a
-	// shared default error formatter in ErrorHandler classes like
-	// StreamErrorLogger.
-	//
-	virtual string warning(const SAXParseException& toCatch);
-	virtual string error(const SAXParseException& toCatch);
-	virtual string fatalError(const SAXParseException& toCatch);
-    };
-
-
-    class StreamErrorLogger : public ErrorHandler
-    {
-    public:
-
-	// We take ownership of the ErrorFormatter and will delete it 
-	// when destroyed.
-	//
-	StreamErrorLogger (ErrorFormatter *fmt = new ErrorFormatter());
-
-	// ------------------------------------------------------------------
-	//  Implementation of the error handler interface
-	// ------------------------------------------------------------------
-	void warning(const SAXParseException& toCatch);
-	void error(const SAXParseException& toCatch);
-	void fatalError(const SAXParseException& toCatch);
-	void resetErrors();
-
-	~StreamErrorLogger () { delete mFormat; }
-
-    private:
-	StreamErrorLogger (const StreamErrorLogger &);
-	StreamErrorLogger &operator= (const StreamErrorLogger &);
-
-	log4cpp::Category &log;
-	int mNumFatal;
-	int mNumError;
-	int mNumWarning;
-	ErrorFormatter *mFormat;
-
-    };
+    void Print (ostream &out, DOMNode doc);
+#endif
 
 
     // A convenience class which constructs a string by transcoding 
@@ -100,29 +54,62 @@ namespace domx
     class xstring : public std::string
     {
     public:
-	xstring (const DOMString &ds)
+	const XMLCh *
+	xc()
 	{
-	    assign (ds);
+	    delete mxc;
+	    mxc = XMLString::transcode(this->c_str());
+	    return mxc;
+	}
+
+	operator const XMLCh *()
+	{
+	    return xc();
 	}
 
 	xstring (const XMLCh *xc)
 	{
-	    assign (DOMString (xc));
+	    mxc = 0;
+	    assign (xc);
 	}
 
-	xstring &operator= (const DOMString &ds)
+	xstring (const char s[])
 	{
-	    assign (ds);
+	    mxc = 0;
+	    string::operator= (s);
+	}
+
+	xstring (const xstring &xs) : string (xs)
+	{
+	    mxc = 0;
+	}
+
+	xstring (const string &xs) : string (xs)
+	{
+	    mxc = 0;
+	}
+
+	xstring &operator= (const XMLCh *xc)
+	{
+	    return assign (xc);
+	}
+
+	xstring &operator= (const xstring &xs)
+	{
+	    string::operator= (xs);
 	    return *this;
 	}
 
-	xstring &assign (const DOMString &ds)
+	xstring &assign (const XMLCh *xc)
 	{
-	    char *p = ds.transcode();
+	    char *p = XMLString::transcode(xc);
 	    string::operator= (p);
 	    delete [] p;
 	    return *this;
 	}
+
+    private:
+	XMLCh *mxc;
     };
 
 };

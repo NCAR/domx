@@ -23,6 +23,7 @@ namespace
   log4cpp::CategoryStream::Separator endlog = log4cpp::CategoryStream::ENDLINE;
 }
 
+
 namespace domx
 {
 
