@@ -7,8 +7,9 @@ env = env.Create('domx')
 tools = env.Require(Split('PKG_XERCESC PKG_LOGX'))
 
 def PKG_DOMX(env):
-        env.Append(LIBPATH= ['#domx',])
-        env.Append(LIBS=['domx',])
+        # env.Append(LIBPATH= ['#domx',])
+        # env.Append(LIBS=['domx',])
+        env.Append(LIBS=[env.GetGlobalTarget('libdomx'),])
 	env.Apply (tools)
 
 Export('PKG_DOMX')
@@ -40,3 +41,4 @@ env.InstallProgram(xmlcatalog)
 
 SConscript(dirs=['tests'])
 
+env.Apidocs(sources + headers)

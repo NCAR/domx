@@ -15,7 +15,6 @@ namespace domx
 
   class XmlObjectInterface;
   class XmlObjectCatalogP;
-  class XmlObjectCatalog;
 
   /**
    * An XmlObjectCatalog is a cheap but reliable storage mechanism for
@@ -26,7 +25,7 @@ namespace domx
    * name.  If a method fails, an error message is accumulated and the
    * method returns false.  The current accumulation of error messages can
    * be checked with the errorsPending(), clearErrors(), and getErrors()
-   * methods.  The maximum of number of errors accumulated is @code
+   * methods.  The maximum of number of errors accumulated is @c
    * MAX_PENDING_ERRORS.
    *
    * Catalogs are hierarchical: one catalog can contain other catalogs.
