@@ -1,0 +1,51 @@
+
+objects can offer a method to generate a key to be used for an object, such
+as a timeKey method for XmlFile which prepends the time in a
+lexicographically sorted format and then appends the filename so that
+different files with the same times will have unique keys when in the same
+catalog.
+
+likewise each file consumer can place it's 'ok-to-clean' marker in the
+scrubber queue by including the consumer name in the key, then the scrubber
+just needs to look for the right number of occurrences of the same file
+from the right consumers to know the file really can be scrubbed.  Then the
+two records for the same file can be merged and moved into the 'scrubbed'
+catalog.
+
+since we're generating the key index on the fly, it should be possible to
+use whatever ordering we want, such as interpreting the keys as times and
+sorting by time.  Or, if we accept the overhead of opening every single
+file, we can make any field in the object the sort key, using a map from
+the key value to the actual object id.  Maybe we can just support putting
+key values in substrings of the file name, such as <id>-<key1>-<key2>.xml.
+Then any field can be the index without loading the object.  The object
+level might be the place to define the key, or better add an
+xmlobjectcatalogentry.key interface to every object added to the catalog.
+
+Something like this is necessary so that files from different platform
+streams can be inserted into the same queue and still pulled from that
+queue in time order, without relying on the object timestamp.
+
+object's can be assigned an xsl file in the catalog, also something to
+be stored either in xmlobject or xmlobjectcatalogentry interface.
+
+system catalog can have an xsl which generates links to the summary files
+for each of the member catalogs, so an easy index to all file queues on the
+system
+
+It should be possible to implement equivalence checks for xmlobject, either
+based on comparisons of the documents or by calling an equivalence method
+on each node, which like construct() could also be called Member by Member.
+
+The xmlobject level would be the place to add universal attributes like an
+ID.
+
+Catalog should update its summary file on changes, perhaps with a
+system call like:
+
+	(cd <path> && 
+	 cat *.xml > summary.xml-$$ && mv summary.xml-$$ summary.xml) &
+
+The summary should be consistent, even if two separate updates in a race
+condition cause the more recent to be overwritten by a less recent.
+

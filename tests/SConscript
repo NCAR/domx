@@ -1,0 +1,10 @@
+# -*- python -*-
+
+Import('env')
+env = env.Create ('domx.tests')
+env.Require(Split("PKG_DOMX"))
+
+env.Program("runtests", Split("""
+     runtests.cc
+"""))
+
