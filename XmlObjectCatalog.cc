@@ -93,6 +93,17 @@ namespace domx
 
 }
 
+namespace
+{
+  std::string
+  getSystemCatalogDir()
+  {
+    char* dir = getenv("DOMX_SYSTEM_CATALOG_DIR");
+    if (dir)
+      return dir;
+    return "/var/tmp";
+  }
+}
 
 
 XmlObjectCatalog::
@@ -129,7 +140,7 @@ XmlObjectCatalog::
 open (const std::string& name)
 {
   XmlObjectCatalog syscat;
-  if (! syscat.open  ("system", "/var/tmp", false))
+  if (! syscat.open  ("system", getSystemCatalogDir(), false))
   {
     _mp->failures() << "opening " << name
 		    << ": could not open system catalog: "
@@ -159,7 +170,7 @@ XmlObjectCatalog::
 registerCatalog()
 {
   XmlObjectCatalog syscat;
-  if (! syscat.open  ("system", "/var/tmp", false))
+  if (! syscat.open  ("system", getSystemCatalogDir(), false))
   {
     _mp->failures() << "registering " << name()
 		    << ": could not open system catalog: "
