@@ -24,6 +24,9 @@ headers = Split("""
  XmlFileObject.h  XmlObjectInterface.h  XmlObjectNode.h
  """)
 
+env.SourceCode('.', None)
+# env.SourceCode(headers + sources, env.CVS('cvs:/code/cvs'))
+
 lib = env.Library('domx', sources)
 Default(lib)
 install_lib = env.InstallLibrary(lib)
