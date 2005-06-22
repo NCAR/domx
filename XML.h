@@ -236,6 +236,7 @@ namespace domx
     virtual string warning(const SAXParseException& toCatch);
     virtual string error(const SAXParseException& toCatch);
     virtual string fatalError(const SAXParseException& toCatch);
+    virtual ~ErrorFormatter();
   };
 
 

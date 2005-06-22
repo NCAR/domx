@@ -306,6 +306,10 @@ namespace domx
   }
 
 
+  ErrorFormatter::
+  ~ErrorFormatter()
+  {}
+
   StreamErrorLogger::StreamErrorLogger (ErrorFormatter *fmt) :
     log (log4cpp::Category::getInstance ("XMLErrors")),
     mFormat (fmt)
