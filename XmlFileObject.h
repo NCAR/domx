@@ -13,9 +13,12 @@
 namespace domx
 {
 
+  struct MD5Private;
+
   class XmlFileObject : public XmlObjectInterface
   {
     XmlObjectNode* _xi;
+    MD5Private* _md5context;
 
   public:
 
@@ -27,6 +30,8 @@ namespace domx
     };
 
     XmlFileObject();
+
+    ~XmlFileObject();
 
     /**
      * The name component of the file path.
@@ -179,6 +184,30 @@ namespace domx
      **/
     int
     computeMD5 ();
+
+
+    /**
+     * Update a running md5 checksum for this file by passing the block
+     * of bytes which have been appended to the file.  This does not set the
+     * the checksum attribute of this file object, only updates the running
+     * computation.  If no running checksum has been started yet, then it
+     * will be initialized the first time this method is called.  To
+     * compute the final value of the running checksum and set that value
+     * on this file, call finishMD5().
+     * 
+     **/
+    void
+    updateMD5 (unsigned char* buf, unsigned int len);
+
+
+    /**
+     * Complete the calculation of the running MD5 checksum and set that
+     * checksum on this file object.  Subsequent calls to updateMD5() will
+     * start over as if an empty data stream.  If no running checksum has
+     * been started with updateMD5(), then this method does nothing.
+     **/
+    void
+    finishMD5 ();
 
   };
 

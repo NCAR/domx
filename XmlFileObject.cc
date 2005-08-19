@@ -20,11 +20,18 @@ extern "C"
 #include "MD5.c"
 }
 
-
+namespace domx
+{
+  struct MD5Private
+  {
+    MD5Context ctx;
+  };
+}
 
 XmlFileObject::
 XmlFileObject() :
   _xi(newNode("xmlfileobject")),
+  _md5context(0),
   Name (_xi, "filename"),
   Description (_xi, "description"),
   Directory (_xi, "directory"),
@@ -38,6 +45,12 @@ XmlFileObject() :
   Expires (_xi, "expires")
 {}
 
+
+XmlFileObject::
+~XmlFileObject()
+{
+  delete _md5context;
+}
 
 
 void
@@ -82,6 +95,37 @@ computeMD5 ()
   }
   this->MD5 = zbuf;
   return 1;
+}
+
+
+void
+XmlFileObject::
+updateMD5 (unsigned char* buf, unsigned int len)
+{
+  if (! _md5context)
+  {
+    _md5context = new MD5Private;
+    MD5Init (&_md5context->ctx);
+  }
+  MD5Update (&_md5context->ctx, buf, len);
+}
+
+
+void
+XmlFileObject::
+finishMD5 ()
+{
+  if (_md5context)
+  {
+    unsigned char digest[16];
+    char base16[33];
+
+    MD5Final(digest, &_md5context->ctx);
+    DigestToBase16(digest, base16);
+    this->MD5 = base16;
+    delete _md5context;
+    _md5context = 0;
+  }
 }
 
 

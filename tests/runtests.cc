@@ -13,6 +13,7 @@ LOGGING("domx-tests");
 
 #include <iostream>
 #include <sstream>
+#include <fstream>
 #include <time.h>
 
 using namespace domx;
@@ -274,9 +275,34 @@ int
 test_xmlfileobject()
 {
   int errors = 0;
+  char buf[4096];
 
-  // Create
+  // Create a file, copy variously sized blocks into it using a running
+  // checksum.  Then close the file and compute the checksum again, and
+  // compare the two.
 
+  std::ofstream ofile("test-md5-data.bak");
+  std::ifstream ifile("runtests");
+
+  XmlFileObject xfo;
+  xfo.setPath ("test-md5-data.bak");
+  unsigned int n = 1024;
+  std::streamsize count;
+  while ((count = ifile.readsome(buf, n)) > 0)
+  {
+    ofile.write(buf, count);
+    xfo.updateMD5((unsigned char*)buf, count);
+    n = (n+1024)%4096 + 1024;
+  }
+  xfo.finishMD5();
+  std::string firstmd5 = xfo.MD5();
+  DLOG << "running md5 = " << firstmd5;
+  xfo.MD5 = "";
+  ofile.close();
+  ifile.close();
+  Check(xfo.computeMD5());
+  DLOG << "computed md5 = " << xfo.MD5();
+  Check (firstmd5 == xfo.MD5());
   return errors;
 }
 
