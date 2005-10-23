@@ -6,7 +6,7 @@ import atd_scons
 
 def setup(env):
     prefix = env['OPT_PREFIX']
-    env.AppendUnique (CPPPATH=[os.path.join(prefix,'include')])
+    env.AppendUnique (CPPPATH=['#/..',os.path.join(prefix,'include')])
     env.Append(LIBPATH= [os.path.join(prefix,'lib'),])
 
 env = atd_scons.Pkg_Environment()
