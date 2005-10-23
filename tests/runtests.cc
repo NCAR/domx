@@ -171,7 +171,8 @@ test_xmlobject ()
   Check(r.NextVisit().key() == "20100608.235649");
   Check(r.NextVisit().toString() == "2010-06-08 23:56:49");
   Check(r.store ("vanrepairs.xml"));
-  r.assume(Repairs());
+  Repairs default_repairs;
+  r.assume(default_repairs);
   Check(r.NextVisit() == 0);
   Check(r.load ("vanrepairs.xml"));
   Check(r.NextVisit().key() == "20100608.235649");
