@@ -128,6 +128,49 @@ namespace domx
   }
 
 
+  template <>
+  void
+  setValue (xercesc::DOMNode* node, 
+	    const xstring& name, const xstring& value)
+  {
+    appendTextElement(node, name, value);
+  }
+
+  template <>
+  bool
+  getValue (xercesc::DOMNode* node, const xstring& name, xstring& value)
+  {
+    bool result = false;
+    // First find the node.
+    xercesc::DOMNode* child = findElement(node, name);
+    if (child)
+    {
+      string newvalue = getTextElement(child);
+      if (newvalue != value)
+      {
+	result = true;
+	value = newvalue;
+      }
+    }
+    return result;
+  }
+
+  DOMElement*
+  findElement(DOMNode* node, const std::string& path)
+  {
+    xercesc::DOMNode* child = node->getFirstChild();
+    while (child)
+    {
+      xstring name = child->getNodeName();
+      if (name == path)
+      {
+	return asElement(child);
+      }
+      child = child->getNextSibling();
+    }
+    return 0;
+  }
+
 #ifdef notdef
   bool
   nodeFindAttribute (Node node, DOMString name, string *value = 0)
@@ -211,6 +254,13 @@ namespace domx
       out << tab << "</" << node_name << ">" << endl;
     }
     return out;
+  }
+
+
+  std::ostream&
+  domToStream (std::ostream& out, DOMNode* node, int indent)
+  {
+    return domToStream(out, node->getOwnerDocument(), node, indent);
   }
 
 

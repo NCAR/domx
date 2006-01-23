@@ -152,6 +152,13 @@ namespace domx
   asElement (xercesc::DOMNode* node);
 
   /**
+   * Look for a child element of the given @p node along the path @p path.
+   * So far only paths for immediate child nodes are supported.
+   **/
+  DOMElement*
+  findElement(DOMNode* node, const std::string& path);
+
+  /**
    * Check the DOM node for the named attribute.  If the
    * attribute exists, return true.  If value is nonzero, then set it
    * to the value of the attribute.
@@ -177,11 +184,13 @@ namespace domx
   bool
   getAttribute (xercesc::DOMNode* node, const xstring& name, xstring *value);
 
+#ifdef notdef
   inline bool
   getAttribute (xercesc::DOMNode* node, const char* name, xstring *value = 0)
   {
     return getAttribute<xstring> (node, xstring(name), value);
   }
+#endif
 
   template <typename T>
   void
@@ -208,12 +217,72 @@ namespace domx
   getTextElement (xercesc::DOMNode* node);
 
   /**
+   * Check the DOM node for the named element with a text element child.
+   * If the element exists, check it against the current value before setting 
+   * the new value.  Return true if the new value is different.
+   **/
+  template <typename T>
+  bool
+  getValue (xercesc::DOMNode* node, const xstring& name, T& value);
+
+  template <>
+  bool
+  getValue (xercesc::DOMNode* node, const xstring& name, xstring& value);
+
+  template <typename T>
+  bool
+  getValue (xercesc::DOMNode* node, const xstring& name, T& value)
+  {
+    xstring xvalue;
+    bool result = false;
+    if (getValue<xstring> (node, name, xvalue))
+    {
+      T newvalue;
+      std::istringstream os (xvalue);
+      os >> newvalue;
+      result = (value != newvalue);
+      value = newvalue;
+    }
+    return result;
+  }
+
+#ifdef notdef
+  inline bool
+  getValue (xercesc::DOMNode* node, const char* name, xstring& value)
+  {
+    return getValue<xstring> (node, xstring(name), value);
+  }
+#endif
+
+  template <typename T>
+  void
+  setValue (xercesc::DOMNode* node, const xstring& name, const T& value)
+  {
+    std::ostringstream os;
+    os << value;
+    setValue<xstring> (node, name, xstring(os.str()));
+  }
+
+  template <>
+  void
+  setValue (xercesc::DOMNode* node, 
+	    const xstring& name, const xstring& value);
+
+  /**
    * Write the given XML document @p doc as text to the ostream @p out,
    * beginning with the document element @p node and using @p indent as the
    * number of spaces to indent the node.
    **/
   std::ostream&
-  domToStream (std::ostream& out, DOMDocument* doc, DOMNode* node, int indent);
+  domToStream (std::ostream& out, DOMDocument* doc, DOMNode* node, 
+	       int indent = 2);
+
+  /**
+   * Same as the other domToStream(), except the document is retrieved
+   * by calling getOwnerDocument() on the @p node.
+   **/
+  std::ostream&
+  domToStream (std::ostream& out, DOMNode* node, int indent = 2);
 
   /**
    * Prune all text nodes which are empty or have only whitespace, and trim
