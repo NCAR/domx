@@ -159,6 +159,14 @@ namespace domx
   findElement(DOMNode* node, const std::string& path);
 
   /**
+   * Look for then next child element of the given @p sib along the
+   * path @p path.  So far only paths for immediate child nodes are
+   * supported.
+   **/
+  DOMElement*
+  findNextElement(DOMNode* sib, const std::string& path);
+
+  /**
    * Check the DOM node for the named attribute.  If the
    * attribute exists, return true.  If value is nonzero, then set it
    * to the value of the attribute.

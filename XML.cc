@@ -171,6 +171,20 @@ namespace domx
     return 0;
   }
 
+  DOMElement*
+  findNextElement(DOMNode* sib, const std::string& path)
+  {
+    while ( (sib = sib->getNextSibling()) )
+    {
+      xstring name = sib->getNodeName();
+      if (name == path)
+      {
+	return asElement(sib);
+      }
+    }
+    return 0;
+  }
+
 #ifdef notdef
   bool
   nodeFindAttribute (Node node, DOMString name, string *value = 0)
