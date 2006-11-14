@@ -5,6 +5,8 @@
 #ifndef _domx_XML_
 #define _domx_XML_
 
+#include "domxfwd.h"
+
 #include <string>
 #include <sstream>
 
@@ -254,6 +256,29 @@ namespace domx
     return result;
   }
 
+  xstring
+  getString (xercesc::DOMNode* node, const xstring& name)
+  {
+    xstring v;
+    getValue(node, name, v);
+    return v;
+  }
+
+
+  /**
+   * Like getValue(), but returns a stringstream from which to read
+   * a value.
+   **/
+  std::istringstream&
+  getStream (xercesc::DOMNode* node, const xstring& name,
+	     std::istringstream& in)
+  {
+    xstring v;
+    getValue(node, name, v);
+    in.str(v);
+    return in;
+  }
+
 #ifdef notdef
   inline bool
   getValue (xercesc::DOMNode* node, const char* name, xstring& value)
@@ -283,14 +308,14 @@ namespace domx
    **/
   std::ostream&
   domToStream (std::ostream& out, DOMDocument* doc, DOMNode* node, 
-	       int indent = 2);
+	       int indent);
 
   /**
    * Same as the other domToStream(), except the document is retrieved
    * by calling getOwnerDocument() on the @p node.
    **/
   std::ostream&
-  domToStream (std::ostream& out, DOMNode* node, int indent = 2);
+  domToStream (std::ostream& out, DOMNode* node, int indent);
 
   /**
    * Prune all text nodes which are empty or have only whitespace, and trim
