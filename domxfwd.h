@@ -2,8 +2,8 @@
 //
 // $Id: XML.h 5232 2006-04-19 17:17:52Z cjw $
 
-#ifndef _domxfwd_XML_
-#define _domxfwd_XML_
+#ifndef _domx_domxfwd_
+#define _domx_domxfwd_
 
 #include <iosfwd>
 #include <string>
@@ -96,6 +96,17 @@ namespace domx
   std::string
   getTextElement (domx_xercesc::DOMNode* node);
 
+  xstring
+  getString (domx_xercesc::DOMNode* node, const xstring& name);
+
+  /**
+   * Like getValue(), but returns a stringstream from which to read
+   * a value.
+   **/
+  std::istringstream&
+  getStream (domx_xercesc::DOMNode* node, const xstring& name, 
+	     std::istringstream& in);
+
   /**
    * Write the given XML document @p doc as text to the ostream @p out,
    * beginning with the document element @p node and using @p indent as the
@@ -121,7 +132,7 @@ namespace domx
 
   class ErrorFormatter;
 
-};
+}
 
 
-#endif // _domx_XML_
+#endif // _domx_domxfwd_

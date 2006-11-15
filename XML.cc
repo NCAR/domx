@@ -155,6 +155,24 @@ namespace domx
     return result;
   }
 
+  xstring
+  getString (xercesc::DOMNode* node, const xstring& name)
+  {
+    xstring v;
+    getValue(node, name, v);
+    return v;
+  }
+
+  std::istringstream&
+  getStream (xercesc::DOMNode* node, const xstring& name,
+	     std::istringstream& in)
+  {
+    xstring v;
+    getValue(node, name, v);
+    in.str(v);
+    return in;
+  }
+
   DOMElement*
   findElement(DOMNode* node, const std::string& path)
   {

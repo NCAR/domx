@@ -256,29 +256,6 @@ namespace domx
     return result;
   }
 
-  xstring
-  getString (xercesc::DOMNode* node, const xstring& name)
-  {
-    xstring v;
-    getValue(node, name, v);
-    return v;
-  }
-
-
-  /**
-   * Like getValue(), but returns a stringstream from which to read
-   * a value.
-   **/
-  std::istringstream&
-  getStream (xercesc::DOMNode* node, const xstring& name,
-	     std::istringstream& in)
-  {
-    xstring v;
-    getValue(node, name, v);
-    in.str(v);
-    return in;
-  }
-
 #ifdef notdef
   inline bool
   getValue (xercesc::DOMNode* node, const char* name, xstring& value)
@@ -389,7 +366,7 @@ namespace domx
 
   };
 
-};
+}
 
 
 #endif // _domx_XML_
