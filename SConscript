@@ -10,8 +10,7 @@ def PKG_DOMX(env):
         # env.Append(LIBPATH= ['#domx',])
         # env.Append(LIBS=['domx',])
         env.Append(LIBS=[env.GetGlobalTarget('libdomx'),])
-	for t in tools:
-		env.Tool(t)
+	env.Apply (tools)
 
 Export('PKG_DOMX')
 
