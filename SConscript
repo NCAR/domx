@@ -2,17 +2,14 @@
 
 import os
 
-Import('env')
-env = env.Create('domx')
-tools = env.Require(Split('PKG_XERCESC PKG_LOGX'))
+tools = Split('xercesc logx')
+env = Environment(tools = ['default'] + tools)
 
-def PKG_DOMX(env):
-        # env.Append(LIBPATH= ['#domx',])
-        # env.Append(LIBS=['domx',])
+def domx(env):
         env.Append(LIBS=[env.GetGlobalTarget('libdomx'),])
-	env.Apply (tools)
+	env.Require (tools)
 
-Export('PKG_DOMX')
+Export('domx')
 
 sources = Split(
 """
