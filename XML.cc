@@ -34,7 +34,7 @@ namespace domx
     {
       ELOG << "Error during Xerces-c Initialization.\n"
 	   << "  Exception message:"
-	   << xe.getMessage() << endlog;
+	   << xe.getMessage();
     }
 
     return initialized;
@@ -405,7 +405,7 @@ namespace domx
   StreamErrorLogger::warning(const SAXParseException& toCatch)
   {
     ++mNumWarning;
-    log.warnStream() << mFormat->warning(toCatch) << endlog;
+    log.warnStream() << mFormat->warning(toCatch);
     throw SAXParseException(toCatch);
   }
 
@@ -413,7 +413,7 @@ namespace domx
   StreamErrorLogger::error(const SAXParseException& toCatch)
   {
     ++mNumError;
-    log.errorStream() << mFormat->error(toCatch) << endlog;
+    log.errorStream() << mFormat->error(toCatch);
     throw SAXParseException(toCatch);
   }
 
@@ -421,7 +421,7 @@ namespace domx
   StreamErrorLogger::fatalError(const SAXParseException& toCatch)
   {
     ++mNumFatal;
-    log.fatalStream() << mFormat->fatalError (toCatch) << endlog;
+    log.fatalStream() << mFormat->fatalError (toCatch);
     throw SAXParseException(toCatch);
   }
 
@@ -444,7 +444,7 @@ namespace domx
   LogErrorHandler::handleError (const DOMError &domError)
   {
     char *msg = XMLString::transcode(domError.getMessage());
-    mLog.errorStream() << msg << endlog;
+    mLog.errorStream() << msg;
     delete[] msg;
 
     // Instructs the serializer to continue serialization if possible.

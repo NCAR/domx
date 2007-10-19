@@ -58,18 +58,18 @@ namespace
     catch (const XMLException& e)
     {
       ELOG << "An error occured during parsing\n   Message: "
-	   << xstring(e.getMessage()) << endlog;
+	   << xstring(e.getMessage());
       errorsOccured = true;
     }
     catch (const xercesc::DOMException& e)
     {
       ELOG << "An error occured during parsing\n   Message: "
-	   << xstring(e.msg) << endlog;
+	   << xstring(e.msg);
       errorsOccured = true;
     }
     catch (...)
     {
-      ELOG << "An error occured during parsing\n " << endlog;
+      ELOG << "An error occured during parsing\n ";
       errorsOccured = true;
     }
     return 0;
