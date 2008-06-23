@@ -2,12 +2,12 @@
 
 import os
 
-tools = Split('xercesc logx')
+tools = Split('xercesc logx doxygen')
 env = Environment(tools = ['default'] + tools)
 
 def domx(env):
-        env.Append(LIBS=[env.GetGlobalTarget('libdomx'),])
-	env.Require (tools)
+    env.Append(LIBS=[env.GetGlobalTarget('libdomx'),])
+    env.Require (tools)
 
 Export('domx')
 
