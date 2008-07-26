@@ -24,10 +24,11 @@ namespace domx
     {}
 
     /**
-     * Convert this time to a string with a standard format that can be
-     * translated back to a time by XmlTime objects.
+     * Convert this time to a string in standard ISO format that can be
+     * translated back to a time by XmlTime objects.  The ISO format can
+     * also be sorted lexicographically.
      *
-     * The format: YYYY:MM:DD HH:MM:SS
+     * The format: YYYYMMDDTHHMMSS
      **/
     std::string
     toString() const;
@@ -40,8 +41,8 @@ namespace domx
 
     /**
      * Return a string for this time in a standard key format which will
-     * sort lexicographically in time order.  The time format is
-     * "YYYYMMDD.HHMMSS".
+     * sort lexicographically in time order.  The time format is the ISO
+     * format, same as for toString(): "YYYYMMDDTHHMMSS".
      **/
     std::string
     key () const;

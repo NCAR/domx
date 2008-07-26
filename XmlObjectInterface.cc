@@ -376,10 +376,10 @@ XmlObjectInterface::
 // of all of the node names in the class hierarchy.
 std::string
 XmlObjectInterface::
-interfaceName ()
+interfaceName () const
 {
   std::string name;
-  node_list_t::iterator it;
+  node_list_t::const_iterator it;
   for (it = _nodes.begin(); it != _nodes.end(); ++it)
   {
     if (name.length() > 0)

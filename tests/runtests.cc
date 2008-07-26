@@ -168,15 +168,15 @@ test_xmlobject ()
   // Check the time member of a Repair object associated with the van.
   r.assume (van);
   r.NextVisit = 1276041409L;
-  Check(r.NextVisit().key() == "20100608.235649");
-  Check(r.NextVisit().toString() == "2010-06-08 23:56:49");
+  Check(r.NextVisit().key() == "20100608T235649");
+  Check(r.NextVisit().toString() == "20100608T235649");
   Check(r.store ("vanrepairs.xml"));
   Repairs default_repairs;
   r.assume(default_repairs);
   Check(r.NextVisit() == 0);
   Check(r.load ("vanrepairs.xml"));
-  Check(r.NextVisit().key() == "20100608.235649");
-  Check(r.NextVisit().toString() == "2010-06-08 23:56:49");
+  Check(r.NextVisit().key() == "20100608T235649");
+  Check(r.NextVisit().toString() == "20100608T235649");
 
   // Now check that we can add an arbitrary interface to an
   // arbitrary object.
@@ -262,12 +262,21 @@ test_xmltime()
   then.fromString(out.str());
   Check (then == now);
 
-  // Check key().
-  std::string bday("2003-07-13 12:34:56");
-  std::istringstream bin (bday);
-  bin >> then;
-  ILOG << bday << " has key(): " << then.key();
-  Check(then.key() == "20030713.123456");
+  {
+    // Check key().
+    std::string bday("2003-07-13 12:34:56");
+    std::istringstream bin (bday);
+    bin >> then;
+    ILOG << bday << " has key(): " << then.key();
+    Check(then.key() == "20030713T123456");
+  }
+  {
+    std::string bday = "20030713T123456";
+    std::istringstream bin (bday);
+    bin >> then;
+    ILOG << bday << " has key(): " << then.key();
+    Check(then.key() == "20030713T123456");
+  }
   return errors;
 }
 
@@ -344,6 +353,7 @@ main(int argc, char* argv[])
     {
       cerr << errors << " errors.\n";
     }
+    return errors;
   }
   catch (const XMLException& e)
   {

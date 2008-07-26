@@ -38,11 +38,7 @@ std::string
 domx::XmlTime::
 key () const
 {
-  struct tm tm;
-  char buf[32];
-  gmtime_r (&_time, &tm);
-  strftime (buf, sizeof(buf), "%Y%m%d.%H%M%S", &tm);
-  return buf;
+  return toString();
 }
 
 
@@ -53,7 +49,7 @@ toString() const
   struct tm tm;
   gmtime_r (&_time, &tm);
   char buf[32];
-  strftime (buf, sizeof(buf), "%Y-%m-%d %H:%M:%S", &tm);
+  strftime (buf, sizeof(buf), "%Y%m%dT%H%M%S", &tm);
   return buf;
 }
 
@@ -84,7 +80,15 @@ operator>>(std::istream& in, domx::XmlTime& xt)
   in >> ttext;
   dtext += " ";
   dtext += ttext;
-  strptime (dtext.c_str(), "%Y-%m-%d %H:%M:%S", &tm);
+  // Handle old format as well for backwards compatibility.
+  if (dtext.find('-') != std::string::npos)
+  {
+    strptime (dtext.c_str(), "%Y-%m-%d %H:%M:%S", &tm);
+  }
+  else
+  {
+    strptime (dtext.c_str(), "%Y%m%dT%H%M%S", &tm);
+  }
   xt = xt_timegm(&tm);
   return in;
 }

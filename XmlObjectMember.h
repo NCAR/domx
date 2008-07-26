@@ -182,6 +182,12 @@ namespace domx
       return set (v);
     }
 
+    std::string
+    toString()
+    {
+      return _node->getString(_name);
+    }
+
     virtual void
     construct ()
     {

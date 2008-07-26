@@ -26,7 +26,7 @@ namespace domx
      * Return the interface name.
      **/
     std::string
-    interfaceName ();
+    interfaceName () const;
 
     /**
      * Dump this object to the given stream as xml-formatted text.
