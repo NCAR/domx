@@ -71,7 +71,7 @@ namespace domx
     const XMLCh *
     xc() const
     {
-      delete[] mxc;
+      xercesc::XMLString::release(&mxc);
       mxc = XMLString::transcode(this->c_str());
       return mxc;
     }
@@ -125,7 +125,7 @@ namespace domx
       {
 	char *p = XMLString::transcode(xc);
 	string::operator= (p);
-	delete [] p;
+        xercesc::XMLString::release(&p);
       }
       else
       {
@@ -136,7 +136,7 @@ namespace domx
 
     ~xstring ()
     {
-      delete[] mxc;
+      xercesc::XMLString::release(&mxc);
       mxc = 0;
     }
 
