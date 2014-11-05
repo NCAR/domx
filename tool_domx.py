@@ -42,4 +42,5 @@ env.InstallProgram(xmlcatalog)
 
 SConscript(dirs=['tests'])
 
+env['DOXYFILE_DICT'].update({ "PROJECT_NAME" : "Domx" })
 env.Apidocs(sources + headers)
