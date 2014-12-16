@@ -59,9 +59,20 @@ namespace domx
 
   /**
    * A class for easily interchanging between std::string and XMLCh*.  It
-   * stores the current value as a std::string, then transcodes to XMLCh*
-   * as needed.  Likewise the value of the string can be changed by
-   * assigning XMLCh* to it.
+   * stores the current value as a std::string as transcoded by
+   * XMLString::transcode(), and it can transcode std::string back to
+   * XMLCh* as needed.  The XMLCh* string is allocated by xerces but owned
+   * by the xstring instance, so it is only valid for the lifetime of the
+   * instance and until Xerces has been terminated.
+   *
+   * When the DOM interface returns XMLCh* strings, often those strings are
+   * internal to the DOMNode and do not need to be released.  This instance
+   * does not hold the pointers to those strings so the lifetime is not
+   * tied to the DOMNode.
+   *
+   * For XMLCh* strings which need to be released, this class provides the
+   * take() method.  That method is like assign(), except this instance
+   * takes ownership of the XMLCh* string and makes sure it gets released.
    **/
   class xstring : public std::string
   {
@@ -84,7 +95,17 @@ namespace domx
     xstring (const XMLCh *xc)
     {
       mxc = 0;
-      assign (xc);
+      assign(xc);
+    }
+
+    explicit
+    xstring (XMLCh *xc, bool take_=false)
+    {
+      mxc = 0;
+      if (!take_)
+	assign(xc);
+      else
+	take(xc);
     }
 
     xstring ()
@@ -130,6 +151,16 @@ namespace domx
       else
       {
 	string::operator= ("");
+      }
+      return *this;
+    }
+
+    xstring& take(XMLCh* xc)
+    {
+      this->assign(xc);
+      if (xc)
+      {
+	xercesc::XMLString::release(&xc);
       }
       return *this;
     }
