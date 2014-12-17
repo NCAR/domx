@@ -203,6 +203,18 @@ namespace domx
     return 0;
   }
 
+  void
+  removeChildren(DOMNode* parent)
+  {
+    DOMNode* node = parent->getFirstChild();
+    while (node)
+    {
+      parent->removeChild(node);
+      node = parent->getFirstChild();
+    }
+  }
+
+
 #ifdef notdef
   bool
   nodeFindAttribute (Node node, DOMString name, string *value = 0)

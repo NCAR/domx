@@ -309,6 +309,9 @@ namespace domx
   setValue (xercesc::DOMNode* node, 
 	    const xstring& name, const xstring& value);
 
+  void
+  removeChildren(xercesc::DOMNode* parent);
+
   /**
    * Write the given XML document @p doc as text to the ostream @p out,
    * beginning with the document element @p node and using @p indent as the
