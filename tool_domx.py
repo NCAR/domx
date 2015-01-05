@@ -10,7 +10,8 @@ domxDir = Dir('.').abspath
 def domx(env):
     env.Append(LIBS=[env.GetGlobalTarget('libdomx'),])
     env.AppendUnique(CPPPATH = domxDir)
-    env.Require (tools)
+    env.AppendDoxref(doxref[0])
+    env.Require(tools)
 
 Export('domx')
 
@@ -40,7 +41,7 @@ xmlcatalog = env.Program('xmlcatalog', sources +
 Default(xmlcatalog)
 env.InstallProgram(xmlcatalog)
 
-SConscript(dirs=['tests'])
-
 env['DOXYFILE_DICT'].update({ "PROJECT_NAME" : "Domx" })
-env.Apidocs(sources + headers)
+doxref = env.Apidocs(sources + headers)
+
+SConscript(dirs=['tests'])
