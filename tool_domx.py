@@ -28,8 +28,11 @@ env.SourceCode('.', None)
 
 lib = env.Library('domx', sources)
 Default(lib)
-install_lib = env.InstallLibrary(lib)
-install_headers = env.InstallHeaders('domx', headers)
+
+# Create install targets if PREFIX is defined
+if env.has_key('PREFIX'):
+  install_lib = env.InstallLibrary(lib)
+  install_headers = env.InstallHeaders('domx', headers)
 
 xmlfilescan = env.Program('xmlfilescan', sources +
               ["xmlfilescan.cc"])
