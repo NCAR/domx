@@ -1,7 +1,5 @@
 # -*- python -*-
 
-Import('PREFIX')
-
 import os
 
 tools = ['xercesc', 'logx', 'doxygen']
@@ -32,21 +30,19 @@ lib = env.Library('domx', sources)
 Default(lib)
 
 # Create install targets if PREFIX is defined
-if not PREFIX and env.has_key('INSTALL_PREFIX'):
+if env.has_key('PREFIX'):
   install_lib = env.InstallLibrary(lib)
   install_headers = env.InstallHeaders('domx', headers)
 
 xmlfilescan = env.Program('xmlfilescan', sources +
               ["xmlfilescan.cc"])
 Default(xmlfilescan)
-if not PREFIX and env.has_key('INSTALL_PREFIX'):
-  env.InstallProgram(xmlfilescan)
+env.InstallProgram(xmlfilescan)
 
 xmlcatalog = env.Program('xmlcatalog', sources +
              ["xmlcatalog.cc"])
 Default(xmlcatalog)
-if not PREFIX and env.has_key('INSTALL_PREFIX'):
-  env.InstallProgram(xmlcatalog)
+env.InstallProgram(xmlcatalog)
 
 env['DOXYFILE_DICT'].update({ "PROJECT_NAME" : "Domx" })
 doxref = env.Apidocs(sources + headers)
