@@ -1,6 +1,6 @@
 // $Id$
 
-#include "XML.h"
+#include "domx/XML.h"
 #include <logx/Logging.h>
 
 #include <iostream>

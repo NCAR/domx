@@ -1,5 +1,5 @@
 
-#include "XmlFileObject.h"
+#include "domx/XmlFileObject.h"
 
 #include <sys/types.h>
 #include <sys/stat.h>

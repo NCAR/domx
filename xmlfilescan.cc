@@ -6,8 +6,8 @@
 
 #include <iostream>
 #include <unistd.h>
-#include "XmlFileObject.h"
-#include "XmlObjectCatalog.h"
+#include "domx/XmlFileObject.h"
+#include "domx/XmlObjectCatalog.h"
 
 #include <string>
 

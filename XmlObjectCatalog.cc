@@ -2,8 +2,8 @@
 // $Id$
 //
 
-#include "XmlObjectCatalog.h"
-#include "XmlObjectNode.h"
+#include "domx/XmlObjectCatalog.h"
+#include "domx/XmlObjectNode.h"
 
 #include "logx/Logging.h"
 #include "logx/system_error.h"

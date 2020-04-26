@@ -2,7 +2,7 @@
 
 // To get strptime from time.h with GLIBC:
 #define _XOPEN_SOURCE
-#include "XmlTime.h"
+#include "domx/XmlTime.h"
 
 #include <stdlib.h>
 #include <string>

@@ -2,14 +2,15 @@
 
 import os
 
-tools = ['xercesc', 'logx', 'doxygen']
+# Need prefixoptions for Install methods.
+tools = ['xercesc', 'logx', 'doxygen', 'prefixoptions']
 env = Environment(tools = ['default'] + tools)
 
-domxDir = Dir('.').abspath
+domxdir = Dir('.')
 
 def domx(env):
     env.Append(LIBS=[env.GetGlobalTarget('libdomx'),])
-    env.AppendUnique(CPPPATH = domxDir)
+    env.AppendUnique(CPPPATH = domxdir)
     env.AppendDoxref(doxref[0])
     env.Require(tools)
 
@@ -20,8 +21,9 @@ sources = Split("""
  """)
 
 headers = Split("""
- XML.h         XmlObjectCatalog.h    XmlObjectMember.h  XmlTime.h
- XmlFileObject.h  XmlObjectInterface.h  XmlObjectNode.h
+ domx/XML.h domx/XmlObjectCatalog.h domx/XmlObjectMember.h domx/XmlTime.h
+ domx/XmlFileObject.h domx/XmlObjectInterface.h domx/XmlObjectNode.h
+ domx/XmlFileReference.h domx/XmlObjectReference.h
  """)
 
 env.SourceCode('.', None)
