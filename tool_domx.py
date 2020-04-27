@@ -23,7 +23,7 @@ sources = Split("""
 headers = Split("""
  domx/XML.h domx/XmlObjectCatalog.h domx/XmlObjectMember.h domx/XmlTime.h
  domx/XmlFileObject.h domx/XmlObjectInterface.h domx/XmlObjectNode.h
- domx/XmlFileReference.h domx/XmlObjectReference.h
+ domx/XmlFileReference.h domx/XmlObjectReference.h domx/domxfwd.h
  """)
 
 env.SourceCode('.', None)
