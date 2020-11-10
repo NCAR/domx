@@ -26,8 +26,6 @@ headers = Split("""
  domx/XmlFileReference.h domx/XmlObjectReference.h domx/domxfwd.h
  """)
 
-env.SourceCode('.', None)
-
 lib = env.Library('domx', sources)
 Default(lib)
 install_lib = env.InstallLibrary(lib)
