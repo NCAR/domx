@@ -28,20 +28,23 @@ headers = Split("""
 
 env.SourceCode('.', None)
 
+# Install targets commented out.  Shouldn't be needed.  There was a conflict
+# the libxml2:xmlcatalog
+
 lib = env.Library('domx', sources)
 Default(lib)
-install_lib = env.InstallLibrary(lib)
-install_headers = env.InstallHeaders('domx', headers)
+#install_lib = env.InstallLibrary(lib)
+#install_headers = env.InstallHeaders('domx', headers)
 
 xmlfilescan = env.Program('xmlfilescan', sources +
               ["xmlfilescan.cc"])
 Default(xmlfilescan)
-env.InstallProgram(xmlfilescan)
+#env.InstallProgram(xmlfilescan)
 
 xmlcatalog = env.Program('xmlcatalog', sources +
              ["xmlcatalog.cc"])
 Default(xmlcatalog)
-env.InstallProgram(xmlcatalog)
+#env.InstallProgram(xmlcatalog)
 
 env['DOXYFILE_DICT'].update({ "PROJECT_NAME" : "Domx" })
 doxref = env.Apidocs(sources + headers)
