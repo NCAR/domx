@@ -26,7 +26,6 @@ headers = Split("""
  domx/XmlFileReference.h domx/XmlObjectReference.h domx/domxfwd.h
  """)
 
-env.SourceCode('.', None)
 
 # Install targets commented out.  Shouldn't be needed.  There was a conflict
 # the libxml2:xmlcatalog
