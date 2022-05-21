@@ -48,7 +48,6 @@ namespace
       return 0;
     }
 
-    bool errorsOccured = false;
     try
     {
       parser->parse (source);
@@ -59,18 +58,15 @@ namespace
     {
       ELOG << "An error occured during parsing\n   Message: "
 	   << xstring(e.getMessage());
-      errorsOccured = true;
     }
     catch (const xercesc::DOMException& e)
     {
       ELOG << "An error occured during parsing\n   Message: "
 	   << xstring(e.msg);
-      errorsOccured = true;
     }
     catch (...)
     {
       ELOG << "An error occured during parsing\n ";
-      errorsOccured = true;
     }
     return 0;
   }
