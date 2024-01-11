@@ -1,51 +1,53 @@
 # -*- python -*-
 
-import os
+from SCons.Script import Environment, Export, SConscript
 
 # Need prefixoptions for Install methods.
 tools = ['xercesc', 'logx', 'doxygen', 'prefixoptions']
-env = Environment(tools = ['default'] + tools)
+env = Environment(tools=['default'] + tools)
 
-domxdir = Dir('.')
+domxdir = env.Dir('.')
 
-def domx(env):
-    env.Append(LIBS=[env.GetGlobalTarget('libdomx'),])
-    env.AppendUnique(CPPPATH = domxdir)
-    env.AppendDoxref(doxref[0])
-    env.Require(tools)
-
-Export('domx')
-
-sources = Split("""
+sources = env.Split("""
  XML.cc XmlObjectInterface.cc XmlObjectCatalog.cc XmlTime.cc XmlFileObject.cc
- """)
+""")
 
-headers = Split("""
+headers = env.Split("""
  domx/XML.h domx/XmlObjectCatalog.h domx/XmlObjectMember.h domx/XmlTime.h
  domx/XmlFileObject.h domx/XmlObjectInterface.h domx/XmlObjectNode.h
  domx/XmlFileReference.h domx/XmlObjectReference.h domx/domxfwd.h
- """)
-
-
-# Install targets commented out.  Shouldn't be needed.  There was a conflict
-# the libxml2:xmlcatalog
+""")
 
 lib = env.Library('domx', sources)
-Default(lib)
-#install_lib = env.InstallLibrary(lib)
-#install_headers = env.InstallHeaders('domx', headers)
+env.Default(lib)
 
-xmlfilescan = env.Program('xmlfilescan', sources +
-              ["xmlfilescan.cc"])
-Default(xmlfilescan)
-#env.InstallProgram(xmlfilescan)
+xmlfilescan = env.Program('xmlfilescan', sources + ["xmlfilescan.cc"])
+xmlcatalog = env.Program('xmlcatalog', sources + ["xmlcatalog.cc"])
 
-xmlcatalog = env.Program('xmlcatalog', sources +
-             ["xmlcatalog.cc"])
-Default(xmlcatalog)
-#env.InstallProgram(xmlcatalog)
+# this replaces the doxref dependency appended by the eol_scons logx tool,
+# which otherwise will not be found and break the build
+if domxdir == env.Dir('#'):
+    env['DOXREF'] = []
 
-env['DOXYFILE_DICT'].update({ "PROJECT_NAME" : "Domx" })
+env['DOXYFILE_DICT'].update({"PROJECT_NAME": "Domx"})
 doxref = env.Apidocs(sources + headers)
 
+
+def domx(env):
+    env.Append(LIBS=lib)
+    env.AppendUnique(CPPPATH=domxdir)
+    env.AppendDoxref(doxref[0])
+    env.Require(tools)
+
+
+Export('domx')
+
 SConscript(dirs=['tests'])
+
+if domxdir == env.Dir('#'):
+    install = env.InstallLibrary(lib)
+    install += env.InstallHeaders('domx', headers)
+    install += env.InstallProgram(xmlfilescan)
+    install += env.InstallProgram(xmlcatalog)
+    env.Alias('install', install)
+    env.SetHelp()

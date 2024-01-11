@@ -1,8 +1,14 @@
 # -*- python -*-
 
-env = Environment(tools = ['default', 'domx'])
+import eol_scons
+from SCons.Script import Environment
 
-env.Program("runtests", Split("""
-     runtests.cc
-"""))
+env = Environment(tools=['default', 'domx', 'testing'])
 
+runtests = env.Program("runtests.cc")
+
+# The test has not been run by the 'test' alias before, so leave it out in
+# case it might break tests in parent projects.
+
+# test = env.TestRun(None, runtests, "cd $SOURCE.dir && ./$SOURCE.name")
+# env.Alias('test', test)
