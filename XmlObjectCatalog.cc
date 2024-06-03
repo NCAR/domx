@@ -344,7 +344,7 @@ remove (const std::string& id)
 }
 
 
-
+#ifdef notdef
 bool
 XmlObjectCatalog::
 move (const std::string& id, XmlObjectCatalog* dest)
@@ -361,6 +361,7 @@ move (const std::string& id, XmlObjectCatalog* dest)
 
   return true;
 }
+#endif
 
 
 bool
@@ -416,6 +417,7 @@ keys(key_set_t& kset)
 }
 
 
+#ifdef notdef
 bool
 XmlObjectCatalog::
 exists (const std::string& name)
@@ -425,6 +427,7 @@ exists (const std::string& name)
 
   return false;
 }
+#endif
 
 
 int

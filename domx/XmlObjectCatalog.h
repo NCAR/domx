@@ -123,6 +123,7 @@ namespace domx
     bool
     remove (const std::string& name);
 
+#ifdef notdef
     /**
      * Move the object with the given @p name from this catalog to @p dest.
      * Note this uses the filesystem atomic rename() call, so the move
@@ -132,6 +133,7 @@ namespace domx
      **/
     bool
     move (const std::string& name, XmlObjectCatalog* dest);
+#endif
 
     /**
      * This loads the given @p object from key @p name in this catalog.
@@ -170,6 +172,7 @@ namespace domx
     bool
     keys(key_set_t& kset);
 
+#ifdef notdef
     /**
      * Return true if an object by this name exists in this catalog,
      * otherwise return false.  The object is not instantiated, so this can
@@ -179,6 +182,7 @@ namespace domx
      **/
     bool
     exists (const std::string& name);
+#endif
 
     /**
      * Return the number of accumulated error messages.

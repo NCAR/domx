@@ -87,7 +87,7 @@ fetch (XmlObjectCatalog* catalog, int argc, char* argv[])
 
 
 int
-keys (XmlObjectCatalog* catalog, int argc, char* argv[])
+keys (XmlObjectCatalog* catalog, int argc, char* /*argv*/[])
 {
   if (argc > 1)
   {
