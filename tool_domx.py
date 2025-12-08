@@ -24,19 +24,13 @@ env.Default(lib)
 xmlfilescan = env.Program('xmlfilescan', sources + ["xmlfilescan.cc"])
 xmlcatalog = env.Program('xmlcatalog', sources + ["xmlcatalog.cc"])
 
-# this replaces the doxref dependency appended by the eol_scons logx tool,
-# which otherwise will not be found and break the build
-if domxdir == env.Dir('#'):
-    env['DOXREF'] = []
-
 env['DOXYFILE_DICT'].update({"PROJECT_NAME": "Domx"})
-doxref = env.Apidocs(sources + headers)
+env.Apidocs(sources + headers)
 
 
 def domx(env):
     env.Append(LIBS=lib)
     env.AppendUnique(CPPPATH=domxdir)
-    env.AppendDoxref(doxref[0])
     env.Require(tools)
 
 
