@@ -1,4 +1,4 @@
-// 
+//
 // $Id$
 //
 
@@ -53,7 +53,7 @@ namespace domx
     {
       _state = CLOSED;
     }
-  
+
     void
     setPath (const std::string& path)
     {
@@ -292,7 +292,7 @@ insert (const std::string& id, XmlObjectInterface* object)
 
   if (id.length() == 0)
   {
-    _mp->failures() << "Cannot insert an object with an emtpy name.";
+    _mp->failures() << "Cannot insert an object with an empty name.";
     return false;
   }
 

@@ -119,7 +119,7 @@ namespace domx
     /**
      * Return true if this interface document has nodes matching the given
      * interface @p xi.  In other words, returns true if this object is
-     * known to implement the given inteface.
+     * known to implement the given interface.
      **/
     bool
     implements (XmlObjectInterface* xi);
