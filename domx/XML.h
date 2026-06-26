@@ -144,8 +144,8 @@ namespace domx
     {
       if (xc)
       {
-	char *p = XMLString::transcode(xc);
-	string::operator= (p);
+        char *p = XMLString::transcode(xc);
+        string::operator= (p);
         xercesc::XMLString::release(&p);
       }
       else
@@ -160,7 +160,7 @@ namespace domx
       this->assign(xc);
       if (xc)
       {
-	xercesc::XMLString::release(&xc);
+        xercesc::XMLString::release(&xc);
       }
       return *this;
     }

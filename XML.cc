@@ -33,8 +33,8 @@ namespace domx
     catch (const XMLException& xe)
     {
       ELOG << "Error during Xerces-c Initialization.\n"
-	   << "  Exception message:"
-	   << xe.getMessage();
+           << "  Exception message:"
+           << xstring(xe.getMessage());
     }
 
     return initialized;
